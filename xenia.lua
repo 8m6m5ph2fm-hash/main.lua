@@ -1,7 +1,6 @@
-
 -- ╔══════════════════════════════════════════╗
 -- ║    TRASH HUB X MARKY.DEV  v1.0.0        ║
--- ║    ⚠️          ║
+-- ║    ⚠️  DISPLAY ONLY — Pure Flex          ║
 -- ╚══════════════════════════════════════════╝
 
 local Players          = game:GetService("Players")
@@ -10,7 +9,7 @@ local RunService       = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local LocalPlayer      = Players.LocalPlayer
 
-local CORRECT_KEY   = "ab1g4il"
+local CORRECT_KEY   = "markyyx1"
 local FAKE_USER     = "m4rkyxtrashub"
 local WATERMARK_TAG = "m4rkyXtrashhub"
 
@@ -269,7 +268,6 @@ SE.AnchorPoint=Vector2.new(.5,.5) SE.Position=UDim2.new(.5,0,.5,0)
 SE.Size=UDim2.new(0,560,0,FULL_H) SE.Visible=false SE.Active=true SE.Draggable=true
 corner(SE,13) local mainStroke=mkstroke(SE,CT.p,1.5) shadow(SE)
 
--- Top bar
 local HT=Instance.new("Frame") HT.BackgroundColor3=CT.p HT.BorderSizePixel=0
 HT.Size=UDim2.new(1,0,0,MINI_H) HT.Parent=SE corner(HT,12)
 local HT_fix=Instance.new("Frame") HT_fix.BackgroundColor3=CT.p HT_fix.BorderSizePixel=0
@@ -279,7 +277,6 @@ makeLabel(HT,"⚡  TRASH HUB  X  MARKY.DEV",UDim2.new(0,12,0,7),UDim2.new(0.65,0
 makeLabel(HT,"v1.0.0  |  Licensed  |  "..FAKE_USER,UDim2.new(0,12,0,26),UDim2.new(0.65,0,0,14),
     Enum.Font.Gotham,10,Color3.fromRGB(220,200,255),1)
 
--- Close btn
 local CloseB=Instance.new("TextButton") CloseB.Parent=HT
 CloseB.BackgroundColor3=Color3.fromRGB(215,50,65) CloseB.Position=UDim2.new(1,-30,0.5,-9)
 CloseB.Size=UDim2.new(0,18,0,18) CloseB.Font=Enum.Font.GothamBold
@@ -287,7 +284,6 @@ CloseB.Text="✕" CloseB.TextColor3=Color3.fromRGB(255,255,255) CloseB.TextSize=
 CloseB.BorderSizePixel=0 corner(CloseB,50)
 CloseB.MouseButton1Click:Connect(function() Root:Destroy() end)
 
--- Minimize btn — collapse total ke topbar
 local MinB=Instance.new("TextButton") MinB.Parent=HT
 MinB.BackgroundColor3=Color3.fromRGB(255,170,0) MinB.Position=UDim2.new(1,-52,0.5,-9)
 MinB.Size=UDim2.new(0,18,0,18) MinB.Font=Enum.Font.GothamBold
@@ -298,15 +294,12 @@ local minimized=false
 MinB.MouseButton1Click:Connect(function()
     minimized=not minimized
     if minimized then
-        tw(SE,{Size=UDim2.new(0,560,0,MINI_H)},.3)
-        MinB.Text="+"
+        tw(SE,{Size=UDim2.new(0,560,0,MINI_H)},.3) MinB.Text="+"
     else
-        tw(SE,{Size=UDim2.new(0,560,0,FULL_H)},.3)
-        MinB.Text="–"
+        tw(SE,{Size=UDim2.new(0,560,0,FULL_H)},.3) MinB.Text="–"
     end
 end)
 
--- ★ Sidebar — posisi naik lebih deket ke topbar
 local Sidebar=Instance.new("Frame") Sidebar.BackgroundColor3=Color3.fromRGB(7,7,12)
 Sidebar.BorderSizePixel=0 Sidebar.Position=UDim2.new(0,0,0,MINI_H)
 Sidebar.Size=UDim2.new(0,SW,1,-MINI_H) Sidebar.Parent=SE corner(Sidebar,10)
@@ -316,13 +309,11 @@ SideFix.Size=UDim2.new(0.5,0,1,0) SideFix.Parent=Sidebar
 local SideLL=Instance.new("UIListLayout") SideLL.Parent=Sidebar
 SideLL.SortOrder=Enum.SortOrder.LayoutOrder SideLL.Padding=UDim.new(0,2)
 
--- Content area
 local ContentBG=Instance.new("Frame") ContentBG.BackgroundTransparency=1
 ContentBG.Position=UDim2.new(0,SW+6,0,MINI_H+4)
 ContentBG.Size=UDim2.new(1,-(SW+10),1,-(MINI_H+8))
 ContentBG.Parent=SE
 
--- Watermark
 local WMF=Instance.new("Frame") WMF.Parent=Root WMF.BackgroundColor3=Color3.fromRGB(7,7,12)
 WMF.Position=UDim2.new(0,10,0,10) WMF.Size=UDim2.new(0,272,0,28) WMF.Visible=false
 corner(WMF,6) local WMStroke=mkstroke(WMF,CT.p,1)
@@ -338,21 +329,14 @@ local tabPages={} local tabBtns={} local activeTab=nil
 local function setTab(name)
     if minimized then
         minimized=false
-        tw(SE,{Size=UDim2.new(0,560,0,FULL_H)},.3)
-        MinB.Text="–"
+        tw(SE,{Size=UDim2.new(0,560,0,FULL_H)},.3) MinB.Text="–"
     end
     for n,pg in pairs(tabPages) do pg.Visible=(n==name) end
     for n,btn in pairs(tabBtns) do
-        if n==name then
-            tw(btn,{BackgroundColor3=CT.p},.2)
-            btn.TextColor3=Color3.fromRGB(255,255,255)
-        else
-            tw(btn,{BackgroundColor3=Color3.fromRGB(9,9,15)},.2)
-            btn.TextColor3=Color3.fromRGB(138,128,162)
-        end
+        if n==name then tw(btn,{BackgroundColor3=CT.p},.2) btn.TextColor3=Color3.fromRGB(255,255,255)
+        else tw(btn,{BackgroundColor3=Color3.fromRGB(9,9,15)},.2) btn.TextColor3=Color3.fromRGB(138,128,162) end
     end
-    activeTab=name
-end
+    activeTab=name end
 
 local function mkTab(name,icon,order)
     local btn=Instance.new("TextButton") btn.Parent=Sidebar
@@ -365,7 +349,6 @@ local function mkTab(name,icon,order)
         if activeTab~=name then tw(btn,{BackgroundColor3=Color3.fromRGB(16,12,28)},.15) end end)
     btn.MouseLeave:Connect(function()
         if activeTab~=name then tw(btn,{BackgroundColor3=Color3.fromRGB(9,9,15)},.15) end end)
-
     local pg=Instance.new("ScrollingFrame") pg.Parent=ContentBG
     pg.BackgroundTransparency=1 pg.Size=UDim2.new(1,0,1,0)
     pg.BorderSizePixel=0 pg.ScrollBarThickness=3
@@ -374,11 +357,9 @@ local function mkTab(name,icon,order)
     ll.SortOrder=Enum.SortOrder.LayoutOrder ll.Padding=UDim.new(0,6)
     ll:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         pg.CanvasSize=UDim2.new(0,0,0,ll.AbsoluteContentSize.Y+10) end)
-
     tabPages[name]=pg tabBtns[name]=btn
     btn.MouseButton1Click:Connect(function() setTab(name) end)
-    return pg
-end
+    return pg end
 
 -- ══════════════════════════════════════
 --  WIDGET HELPERS
@@ -391,12 +372,21 @@ local function mkSection(parent,title,order)
     makeLabel(f,title,UDim2.new(0,10,0,0),UDim2.new(1,-12,1,0),
         Enum.Font.GothamBold,11,CT.a,1) return f end
 
+-- ★ mkToggle — ada tulisan bug merah kecil di bawah
 local function mkToggle(parent,name,order,defOn)
     local row=Instance.new("Frame") row.Parent=parent row.BackgroundColor3=Color3.fromRGB(11,9,19)
-    row.BorderSizePixel=0 row.Size=UDim2.new(1,-4,0,36) row.LayoutOrder=order or 0
+    row.BorderSizePixel=0 row.Size=UDim2.new(1,-4,0,48) row.LayoutOrder=order or 0
     corner(row,8) mkstroke(row,Color3.fromRGB(28,20,50),1)
-    makeLabel(row,name,UDim2.new(0,12,0,0),UDim2.new(0.65,0,1,0),
+
+    -- Nama fitur
+    makeLabel(row,name,UDim2.new(0,12,0,4),UDim2.new(0.65,0,0,20),
         Enum.Font.Gotham,13,Color3.fromRGB(210,200,230),1)
+
+    -- ★ Tulisan bug merah kecil
+    makeLabel(row,"⚠  This Fitur On Bug, The Team Is Fixing",
+        UDim2.new(0,12,0,26),UDim2.new(0.85,0,0,14),
+        Enum.Font.Gotham,9,Color3.fromRGB(220,55,55),1)
+
     local bg=Instance.new("Frame") bg.BackgroundColor3=defOn and CT.p or Color3.fromRGB(32,26,52)
     bg.Position=UDim2.new(1,-52,0.5,-10) bg.Size=UDim2.new(0,40,0,20)
     bg.BorderSizePixel=0 bg.Parent=row corner(bg,50)
@@ -520,7 +510,6 @@ local upLbl=mkComingSoon(pp,"⟳  UPDATING...","Player features are being update
 
 local mp=mkTab("Misc","⚙️",6)
 mkSection(mp,"Theme Customizer",1)
-
 local tNames={"Default","Aqua","Red","Gold","Pink","Green","Rainbow"}
 local tCols={Default=Color3.fromRGB(138,43,226),Aqua=Color3.fromRGB(0,200,220),
     Red=Color3.fromRGB(220,30,60),Gold=Color3.fromRGB(255,180,0),
