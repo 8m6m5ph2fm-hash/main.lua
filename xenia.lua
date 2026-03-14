@@ -1,7 +1,9 @@
--- ╔══════════════════════════════════════════════════╗
--- ║   TRASH HUB  ×  MARKY.DEV  —  v2.0 PREMIUM     ║
--- ║   ⚡  ELITE EDITION  |  DISPLAY ONLY            ║
--- ╚══════════════════════════════════════════════════╝
+--[[
+    ╔══════════════════════════════════════════════════════╗
+    ║   T R A S H  H U B   ×   M A R K Y . D E V         ║
+    ║   MIDNIGHT  LUXURY  EDITION  —  v3.0               ║
+    ╚══════════════════════════════════════════════════════╝
+]]
 
 local Players          = game:GetService("Players")
 local TweenService     = game:GetService("TweenService")
@@ -9,692 +11,1691 @@ local RunService       = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local Stats            = game:GetService("Stats")
 
-local CORRECT_KEY   = "ab1g4il"
-local FAKE_USER     = "m4rkyxtrashub"
-local WATERMARK_TAG = "m4rkyXtrashhub"
+local OWNER_KEY   = "ab1g4il"
+local PREMIUM_KEY = "m4rk7"
+local userTier    = "GUEST"
+local LP          = Players.LocalPlayer
+local WM          = "m4rkyXtrashhub"
+local VER         = "v3.0"
+
+-- ┌─────────────────────────────────────┐
+-- │         COLOR  SYSTEM              │
+-- └─────────────────────────────────────┘
+local K = {
+    -- base layers
+    ink0  = Color3.fromRGB(4, 3, 9),
+    ink1  = Color3.fromRGB(8, 6, 16),
+    ink2  = Color3.fromRGB(13, 10, 24),
+    ink3  = Color3.fromRGB(19, 15, 34),
+    ink4  = Color3.fromRGB(26, 20, 46),
+    -- gold spectrum
+    gold  = Color3.fromRGB(255, 198, 42),
+    goldm = Color3.fromRGB(230, 168, 14),
+    goldd = Color3.fromRGB(185, 128, 0),
+    -- purple spectrum
+    pur1  = Color3.fromRGB(82, 20, 195),
+    pur2  = Color3.fromRGB(115, 45, 228),
+    pur3  = Color3.fromRGB(152, 78, 255),
+    pur4  = Color3.fromRGB(192, 138, 255),
+    pur5  = Color3.fromRGB(222, 195, 255),
+    -- functional
+    mint  = Color3.fromRGB(42, 255, 148),
+    sky   = Color3.fromRGB(42, 210, 255),
+    rose  = Color3.fromRGB(255, 52, 78),
+    amber = Color3.fromRGB(255, 175, 28),
+    -- text
+    w1    = Color3.fromRGB(255, 255, 255),
+    w2    = Color3.fromRGB(215, 205, 240),
+    w3    = Color3.fromRGB(152, 138, 188),
+    w4    = Color3.fromRGB(88, 72, 125),
+    w5    = Color3.fromRGB(44, 34, 72),
+}
 
 local Themes = {
-    Default = {p=Color3.fromRGB(138,43,226), a=Color3.fromRGB(200,130,255), g1=Color3.fromRGB(175,75,255), g2=Color3.fromRGB(85,10,175)},
-    Aqua    = {p=Color3.fromRGB(0,200,220),  a=Color3.fromRGB(120,245,255), g1=Color3.fromRGB(40,225,245), g2=Color3.fromRGB(0,140,165)},
-    Red     = {p=Color3.fromRGB(220,30,60),  a=Color3.fromRGB(255,90,120),  g1=Color3.fromRGB(245,55,85),  g2=Color3.fromRGB(148,8,30)},
-    Gold    = {p=Color3.fromRGB(255,175,0),  a=Color3.fromRGB(255,225,90),  g1=Color3.fromRGB(255,200,25), g2=Color3.fromRGB(190,120,0)},
-    Pink    = {p=Color3.fromRGB(255,75,155), a=Color3.fromRGB(255,165,210), g1=Color3.fromRGB(255,100,170),g2=Color3.fromRGB(190,30,110)},
-    Green   = {p=Color3.fromRGB(0,210,100),  a=Color3.fromRGB(85,255,165),  g1=Color3.fromRGB(30,235,115), g2=Color3.fromRGB(0,148,62)},
-    Rainbow = {p=Color3.fromRGB(138,43,226), a=Color3.fromRGB(200,130,255), g1=Color3.fromRGB(175,75,255), g2=Color3.fromRGB(85,10,175)},
+    Default = {p=K.pur2, a=K.pur4, g1=K.pur3, g2=K.pur1, hi=K.gold},
+    Aqua    = {p=Color3.fromRGB(0,172,220),  a=Color3.fromRGB(82,235,255), g1=Color3.fromRGB(12,202,248), g2=Color3.fromRGB(0,112,168), hi=Color3.fromRGB(0,255,228)},
+    Red     = {p=Color3.fromRGB(205,18,52),  a=Color3.fromRGB(255,82,115), g1=Color3.fromRGB(232,38,72),  g2=Color3.fromRGB(132,0,24),  hi=Color3.fromRGB(255,168,0)},
+    Gold    = {p=Color3.fromRGB(202,148,0),  a=Color3.fromRGB(255,215,82), g1=Color3.fromRGB(238,178,8),  g2=Color3.fromRGB(158,95,0),  hi=Color3.fromRGB(255,248,185)},
+    Pink    = {p=Color3.fromRGB(228,35,142), a=Color3.fromRGB(255,138,205),g1=Color3.fromRGB(252,65,162), g2=Color3.fromRGB(162,5,95),  hi=Color3.fromRGB(255,215,252)},
+    Green   = {p=Color3.fromRGB(0,182,78),   a=Color3.fromRGB(65,255,152), g1=Color3.fromRGB(5,212,92),   g2=Color3.fromRGB(0,118,45),  hi=Color3.fromRGB(158,255,205)},
+    Rainbow = {p=K.pur2, a=K.pur4, g1=K.pur3, g2=K.pur1, hi=K.gold},
 }
+
 local CT        = Themes.Default
 local isRainbow = false
 local rHue      = 0
 
 local Root = Instance.new("ScreenGui")
-Root.Name           = "TrashHubXMarkyV2"
+Root.Name           = "TrashHubMidnight"
 Root.Parent         = game.CoreGui
 Root.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 Root.ResetOnSpawn   = false
 
--- ══ HELPERS ══════════════════════════════════════════
-local function corner(p,r) local c=Instance.new("UICorner") c.CornerRadius=UDim.new(0,r or 8) c.Parent=p return c end
-local function mkstroke(p,col,th) local s=Instance.new("UIStroke") s.Color=col or CT.p s.Thickness=th or 1.5 s.Parent=p return s end
-local function tw(o,pr,t,es) TweenService:Create(o,TweenInfo.new(t or .25,es or Enum.EasingStyle.Quart,Enum.EasingDirection.Out),pr):Play() end
-local function pad(p,l,r,t,b) local u=Instance.new("UIPadding") u.PaddingLeft=UDim.new(0,l or 0) u.PaddingRight=UDim.new(0,r or 0) u.PaddingTop=UDim.new(0,t or 0) u.PaddingBottom=UDim.new(0,b or 0) u.Parent=p return u end
-local function shadow(parent,tr,off)
-    local s=Instance.new("ImageLabel") s.Name="Shd" s.AnchorPoint=Vector2.new(.5,.5)
-    s.BackgroundTransparency=1 s.Position=UDim2.new(.5,0,.5,off or 14) s.Size=UDim2.new(1,60,1,60)
-    s.ZIndex=parent.ZIndex-1 s.Image="rbxassetid://6014261993" s.ImageColor3=Color3.new(0,0,0)
-    s.ImageTransparency=tr or .38 s.ScaleType=Enum.ScaleType.Slice s.SliceCenter=Rect.new(49,49,450,450)
-    s.Parent=parent return s end
-local function lbl(parent,text,pos,size,font,ts,col,zidx,xa)
-    local l=Instance.new("TextLabel") l.Parent=parent l.BackgroundTransparency=1
-    l.Position=pos l.Size=size l.Font=font or Enum.Font.Gotham l.Text=text
-    l.TextSize=ts or 13 l.TextColor3=col or Color3.fromRGB(210,200,230)
-    l.ZIndex=zidx or 1 l.TextXAlignment=xa or Enum.TextXAlignment.Left
-    l.TextWrapped=true return l end
-local function grad(parent,c1,c2,rot)
-    local g=Instance.new("UIGradient")
-    g.Color=ColorSequence.new({ColorSequenceKeypoint.new(0,c1),ColorSequenceKeypoint.new(1,c2)})
-    g.Rotation=rot or 135 g.Parent=parent return g end
-
-local allGrads = {}
-local function trackGrad(g) table.insert(allGrads,g) return g end
-
--- ══ LOADING SCREENS FACTORY ═════════════════════════
-local function makeLoader(name,w,h,zi)
-    local fr=Instance.new("Frame") fr.Name=name fr.Parent=Root
-    fr.BackgroundColor3=Color3.fromRGB(7,6,12) fr.AnchorPoint=Vector2.new(.5,.5)
-    fr.Position=UDim2.new(.5,0,.5,0) fr.Size=UDim2.new(0,w,0,h)
-    fr.ZIndex=zi fr.Visible=(name=="Startup")
-    corner(fr,20) mkstroke(fr,CT.p,2) shadow(fr)
-    grad(fr,Color3.fromRGB(11,9,20),Color3.fromRGB(5,4,9),145)
-
-    local tb=Instance.new("Frame") tb.BackgroundColor3=CT.p tb.BorderSizePixel=0
-    tb.Size=UDim2.new(1,0,0,56) tb.ZIndex=zi+1 tb.Parent=fr corner(tb,18)
-    local tbG=trackGrad(grad(tb,CT.g1,CT.g2,135))
-    local tbFix=Instance.new("Frame") tbFix.BackgroundColor3=CT.p tbFix.BorderSizePixel=0
-    tbFix.Position=UDim2.new(0,0,.5,0) tbFix.Size=UDim2.new(1,0,.5,0) tbFix.ZIndex=zi+1 tbFix.Parent=tb
-    local tbFixG=trackGrad(grad(tbFix,CT.g1,CT.g2,135))
-
-    local trackBG=Instance.new("Frame") trackBG.BackgroundColor3=Color3.fromRGB(14,11,26)
-    trackBG.BorderSizePixel=0 trackBG.Position=UDim2.new(0,18,0,64)
-    trackBG.Size=UDim2.new(1,-36,0,5) trackBG.ZIndex=zi+1 trackBG.Parent=fr corner(trackBG,3)
-    local fill=Instance.new("Frame") fill.BackgroundColor3=CT.p fill.BorderSizePixel=0
-    fill.Size=UDim2.new(0,0,1,0) fill.ZIndex=zi+2 fill.Parent=trackBG corner(fill,3)
-    local fillG=trackGrad(grad(fill,CT.g1,CT.g2,0))
-
-    local logFrame=Instance.new("Frame") logFrame.BackgroundTransparency=1
-    logFrame.Position=UDim2.new(0,18,0,76) logFrame.Size=UDim2.new(1,-36,1,-82)
-    logFrame.ZIndex=zi+1 logFrame.Parent=fr
-    local ll=Instance.new("UIListLayout") ll.Parent=logFrame
-    ll.SortOrder=Enum.SortOrder.LayoutOrder ll.Padding=UDim.new(0,4)
-
-    return fr,tb,tbFix,tbG,tbFixG,fill,fillG,logFrame
+-- ┌─────────────────────────────────────┐
+-- │         UTILITY  BELT              │
+-- └─────────────────────────────────────┘
+local function rc(p, r)
+    local c = Instance.new("UICorner")
+    c.CornerRadius = UDim.new(0, r or 8)
+    c.Parent = p
+    return c
+end
+local function sk(p, col, th, tr)
+    local s = Instance.new("UIStroke")
+    s.Color = col or CT.p
+    s.Thickness = th or 1.5
+    if tr then s.Transparency = tr end
+    s.Parent = p
+    return s
+end
+local function tw(o, props, t, es, ed)
+    TweenService:Create(o, TweenInfo.new(t or .25, es or Enum.EasingStyle.Quart, ed or Enum.EasingDirection.Out), props):Play()
+end
+local function gg(p, c1, c2, rot)
+    local g = Instance.new("UIGradient")
+    g.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, c1), ColorSequenceKeypoint.new(1, c2)}
+    g.Rotation = rot or 135
+    g.Parent = p
+    return g
+end
+local function sd(p, tr, oy, sz)
+    local s = Instance.new("ImageLabel")
+    s.AnchorPoint   = Vector2.new(.5, .5)
+    s.BackgroundTransparency = 1
+    s.Position      = UDim2.new(.5, 0, .5, oy or 18)
+    s.Size          = UDim2.new(1, sz or 72, 1, sz or 72)
+    s.ZIndex        = p.ZIndex - 1
+    s.Image         = "rbxassetid://6014261993"
+    s.ImageColor3   = Color3.new(0, 0, 0)
+    s.ImageTransparency = tr or .38
+    s.ScaleType     = Enum.ScaleType.Slice
+    s.SliceCenter   = Rect.new(49, 49, 450, 450)
+    s.Parent        = p
+    return s
+end
+local function lbl(par, txt, pos, sz, font, ts, col, z, xa)
+    local l = Instance.new("TextLabel")
+    l.Parent              = par
+    l.BackgroundTransparency = 1
+    l.Position            = pos
+    l.Size                = sz
+    l.Font                = font or Enum.Font.Gotham
+    l.Text                = txt
+    l.TextSize            = ts or 13
+    l.TextColor3          = col or K.w2
+    l.ZIndex              = z or 1
+    l.TextXAlignment      = xa or Enum.TextXAlignment.Left
+    l.TextWrapped         = true
+    return l
+end
+local function frm(par, col, pos, sz, z)
+    local f = Instance.new("Frame")
+    f.Parent         = par
+    f.BackgroundColor3 = col or K.ink1
+    f.BorderSizePixel  = 0
+    f.Position         = pos or UDim2.new(0,0,0,0)
+    f.Size             = sz or UDim2.new(1,0,1,0)
+    f.ZIndex           = z or 1
+    return f
 end
 
--- ── STARTUP ──────────────────────────────────
-local SA,SA_tb,SA_tbFix,SA_tbG,SA_tbFixG,SA_fill,SA_fillG,SA_logFrame = makeLoader("Startup",410,305,30)
-lbl(SA_tb,"⚡  TRASH HUB  ×  MARKY.DEV",UDim2.new(0,16,0,9),UDim2.new(.85,0,0,21),Enum.Font.GothamBold,14,Color3.fromRGB(255,255,255),32)
-local SA_sub=lbl(SA_tb,"Booting system...",UDim2.new(0,16,0,31),UDim2.new(.85,0,0,14),Enum.Font.Gotham,10,Color3.fromRGB(220,205,255),32)
-local SA_pct=lbl(SA,"0%",UDim2.new(1,-54,0,62),UDim2.new(0,36,0,12),Enum.Font.GothamBold,10,Color3.fromRGB(150,130,190),31,Enum.TextXAlignment.Right)
-local SA_ord=0
-local function saLog(txt,col)
-    SA_ord=SA_ord+1 local l=Instance.new("TextLabel") l.Parent=SA_logFrame l.BackgroundTransparency=1
-    l.Size=UDim2.new(1,0,0,14) l.Font=Enum.Font.Code l.Text=txt
-    l.TextColor3=col or Color3.fromRGB(130,230,130) l.TextSize=11
-    l.TextXAlignment=Enum.TextXAlignment.Left l.LayoutOrder=SA_ord l.ZIndex=32 end
-local SA_LOGS={
-    {"[SYS]  Booting Trash Hub X Marky.Dev v2.0...", Color3.fromRGB(140,140,255)},
-    {"[OK ]  Allocating memory buffers...",           Color3.fromRGB(100,220,120)},
-    {"[OK ]  Loading AES-256 encryption layer...",    Color3.fromRGB(100,220,120)},
-    {"[OK ]  Establishing server handshake...",       Color3.fromRGB(100,220,120)},
-    {"[OK ]  Verifying game environment...",          Color3.fromRGB(100,220,120)},
-    {"[OK ]  Injecting premium UI v2 framework...",   Color3.fromRGB(100,220,120)},
-    {"[WARN]  Anti-detect fingerprint applied.",      Color3.fromRGB(255,200,80)},
-    {"[OK ]  All modules loaded — 0 errors.",         Color3.fromRGB(80,255,160)},
-    {"[SYS]  Redirecting to key authentication...",   Color3.fromRGB(140,140,255)},
+local GR = {}
+local function gr(par, c1, c2, rot)
+    local g = gg(par, c1, c2, rot)
+    table.insert(GR, g)
+    return g
+end
+
+local renderOn = false
+local function setRender(on)
+    renderOn = on
+    pcall(function()
+        if on then
+            settings().Rendering.QualityLevel = Enum.QualityLevel.Level03
+            workspace.StreamingMinRadius    = 32
+            workspace.StreamingTargetRadius = 96
+        else
+            settings().Rendering.QualityLevel = Enum.QualityLevel.Automatic
+            workspace.StreamingMinRadius    = 64
+            workspace.StreamingTargetRadius = 256
+        end
+    end)
+end
+
+-- ┌─────────────────────────────────────┐
+-- │      PANEL  FACTORY                │
+-- └─────────────────────────────────────┘
+-- mkPanel: base glass card
+local function mkPanel(par, pos, sz, z, rad)
+    local p = frm(par, K.ink1, pos, sz, z)
+    rc(p, rad or 18)
+    sd(p, .22, 20, 76)
+    gr(p, K.ink2, K.ink0, 150)
+    sk(p, K.ink4, 1.4, .0)
+    return p
+end
+
+-- mkBar: styled top header bar for panels
+local function mkBar(parent, h, zi, useGold)
+    local b = frm(parent, K.ink0, UDim2.new(0,0,0,0), UDim2.new(1,0,0,h), zi)
+    rc(b, 18)
+    gr(b, Color3.fromRGB(15,10,30), Color3.fromRGB(5,3,10), 150)
+    sk(b, Color3.fromRGB(22,15,48), 1)
+    -- bottom shimmer
+    local sh = frm(b, K.w1, UDim2.new(0,0,1,-1), UDim2.new(1,0,0,1), zi+1)
+    sh.BackgroundTransparency = 0.86
+    -- left neon accent
+    local acc = frm(b, K.pur2, UDim2.new(0,0,0.1,0), UDim2.new(0,3,0.8,0), zi+1)
+    rc(acc, 2)
+    gr(acc, K.pur4, K.pur1, 180)
+    if useGold then
+        acc.BackgroundColor3 = K.gold
+        gr(acc, K.gold, K.goldd, 180)
+    end
+    -- top neon line
+    local tl = frm(parent, K.pur3, UDim2.new(0.12,0,0,-1), UDim2.new(0.76,0,0,2), zi+2)
+    rc(tl, 2)
+    gr(tl, K.pur4, K.pur1, 0)
+    return b
+end
+
+-- mkLogo: branded logo chip
+local function mkLogo(parent, icon, x, zi, goldBorder)
+    local outer = frm(parent, K.ink2, UDim2.new(0,x,0.5,-24), UDim2.new(0,48,0,48), zi)
+    rc(outer, 15)
+    gr(outer, K.ink3, K.ink1, 145)
+    if goldBorder then sk(outer, K.gold, 2, .28) else sk(outer, K.pur3, 1.5, .38) end
+    local glow = frm(parent, K.pur1, UDim2.new(0,x-4,0.5,-28), UDim2.new(0,56,0,56), zi-1)
+    rc(glow, 17)
+    glow.BackgroundTransparency = 0.82
+    lbl(outer, icon, UDim2.new(0,0,0,0), UDim2.new(1,0,1,0), Enum.Font.GothamBold, 22, K.gold, zi+1, Enum.TextXAlignment.Center)
+    return outer
+end
+
+-- ┌─────────────────────────────────────┐
+-- │      STARTUP  LOADER               │
+-- └─────────────────────────────────────┘
+local SA = mkPanel(Root, UDim2.new(.5,0,.5,0), UDim2.new(0,468,0,308), 30, 22)
+SA.AnchorPoint = Vector2.new(.5,.5)
+SA.Visible = true
+
+local SA_bar = mkBar(SA, 68, 32)
+mkLogo(SA_bar, "⚡", 14, 33, true)
+
+lbl(SA_bar, "TRASH HUB  ×  MARKY.DEV",
+    UDim2.new(0,72,0,12), UDim2.new(.76,0,0,22),
+    Enum.Font.GothamBold, 14, K.w1, 33)
+local SA_sub = lbl(SA_bar, "Initializing...",
+    UDim2.new(0,72,0,37), UDim2.new(.76,0,0,14),
+    Enum.Font.Gotham, 9, K.w3, 33)
+
+local SA_verBadge = frm(SA_bar, K.ink3, UDim2.new(1,-76,0.5,-13), UDim2.new(0,64,0,26), 33)
+rc(SA_verBadge, 13)
+sk(SA_verBadge, K.pur3, 1, .48)
+gr(SA_verBadge, K.ink4, K.ink1, 145)
+lbl(SA_verBadge, VER.."  ELITE",
+    UDim2.new(0,0,0,0), UDim2.new(1,0,1,0),
+    Enum.Font.GothamBold, 9, K.pur4, 34, Enum.TextXAlignment.Center)
+
+-- progress track
+local SA_progBg = frm(SA, K.ink0, UDim2.new(0,20,0,76), UDim2.new(1,-40,0,5), 31)
+rc(SA_progBg, 3)
+sk(SA_progBg, K.ink4, 1)
+local SA_fill = frm(SA_progBg, K.pur2, UDim2.new(0,0,0,0), UDim2.new(0,0,1,0), 32)
+rc(SA_fill, 3)
+gr(SA_fill, K.pur4, K.pur1, 0)
+local SA_dot = frm(SA_fill, K.pur4, UDim2.new(1,-5,-.6,0), UDim2.new(0,10,0,10), 33)
+rc(SA_dot, 50)
+SA_dot.BackgroundTransparency = 0.45
+local SA_pct = lbl(SA, "0%", UDim2.new(1,-56,0,72), UDim2.new(0,40,0,11),
+    Enum.Font.GothamBold, 9, K.pur4, 31, Enum.TextXAlignment.Right)
+
+local SA_logF = frm(SA, K.ink0, UDim2.new(0,20,0,88), UDim2.new(1,-40,1,-96), 31)
+SA_logF.BackgroundTransparency = 1
+local saLL = Instance.new("UIListLayout")
+saLL.Parent = SA_logF
+saLL.Padding = UDim.new(0,2)
+
+local SA_foot = frm(SA, K.ink0, UDim2.new(0,0,1,-26), UDim2.new(1,0,0,26), 32)
+SA_foot.BackgroundTransparency = 0.62
+rc(SA_foot, 22)
+lbl(SA_foot, "Midnight Luxury  ·  "..WM,
+    UDim2.new(0,0,0,0), UDim2.new(1,0,1,0),
+    Enum.Font.Gotham, 8, K.w5, 33, Enum.TextXAlignment.Center)
+
+local SA_ord = 0
+local function saLog(t, c)
+    SA_ord = SA_ord + 1
+    local l = Instance.new("TextLabel")
+    l.Parent              = SA_logF
+    l.BackgroundTransparency = 1
+    l.Size                = UDim2.new(1,0,0,11)
+    l.Font                = Enum.Font.Code
+    l.Text                = t
+    l.TextColor3          = c
+    l.TextSize            = 9
+    l.TextXAlignment      = Enum.TextXAlignment.Left
+    l.LayoutOrder         = SA_ord
+    l.ZIndex              = 32
+end
+
+local SA_LOGS = {
+    {"[BOOT]  Initializing Midnight Luxury v3.0...",  Color3.fromRGB(140,115,255)},
+    {"[PASS]  Secure runtime verified.",               K.mint},
+    {"[PASS]  AES-256 encryption active.",             K.mint},
+    {"[PASS]  Memory sandbox initialized.",            K.mint},
+    {"[WARN]  Anti-detection layer injecting...",      K.gold},
+    {"[PASS]  Luxury UI engine mounted.",              K.mint},
+    {"[PASS]  Network telemetry patched.",             K.mint},
+    {"[PASS]  All 14 modules verified — 0 errors.",    K.mint},
+    {"[BOOT]  Routing → authentication portal...",     Color3.fromRGB(140,115,255)},
 }
 
--- ── KEY SYSTEM ────────────────────────────────
-local SB=Instance.new("Frame") SB.Name="KeySys" SB.Parent=Root
-SB.BackgroundColor3=Color3.fromRGB(7,6,12) SB.AnchorPoint=Vector2.new(.5,.5)
-SB.Position=UDim2.new(.5,0,.5,0) SB.Size=UDim2.new(0,440,0,365) SB.ZIndex=10 SB.Visible=false
-corner(SB,20) mkstroke(SB,CT.p,2) shadow(SB)
-grad(SB,Color3.fromRGB(11,9,20),Color3.fromRGB(5,4,9),145)
+-- ┌─────────────────────────────────────┐
+-- │      KEY  SCREEN                   │
+-- └─────────────────────────────────────┘
+local SB = mkPanel(Root, UDim2.new(.5,0,.5,0), UDim2.new(0,488,0,382), 10, 24)
+SB.AnchorPoint = Vector2.new(.5,.5)
+SB.Visible     = false
 
-local SB_tb=Instance.new("Frame") SB_tb.BackgroundColor3=CT.p SB_tb.BorderSizePixel=0
-SB_tb.Size=UDim2.new(1,0,0,56) SB_tb.ZIndex=11 SB_tb.Parent=SB corner(SB_tb,18)
-local SB_tbG=trackGrad(grad(SB_tb,CT.g1,CT.g2,135))
-local SB_tbFix=Instance.new("Frame") SB_tbFix.BackgroundColor3=CT.p SB_tbFix.BorderSizePixel=0
-SB_tbFix.Position=UDim2.new(0,0,.5,0) SB_tbFix.Size=UDim2.new(1,0,.5,0) SB_tbFix.ZIndex=11 SB_tbFix.Parent=SB_tb
-local SB_tbFixG=trackGrad(grad(SB_tbFix,CT.g1,CT.g2,135))
-lbl(SB_tb,"🔑  TRASH HUB  ×  MARKY.DEV",UDim2.new(0,16,0,9),UDim2.new(.85,0,0,21),Enum.Font.GothamBold,14,Color3.fromRGB(255,255,255),12)
-lbl(SB_tb,"Authentication Portal",UDim2.new(0,16,0,31),UDim2.new(.85,0,0,14),Enum.Font.Gotham,10,Color3.fromRGB(220,205,255),12)
+local SB_bar = mkBar(SB, 70, 12, true)
+mkLogo(SB_bar, "🔐", 14, 13, true)
+lbl(SB_bar, "TRASH HUB  ×  MARKY.DEV",
+    UDim2.new(0,72,0,13), UDim2.new(.70,0,0,22),
+    Enum.Font.GothamBold, 14, K.w1, 13)
+lbl(SB_bar, "Midnight Luxury  ·  Authentication",
+    UDim2.new(0,72,0,37), UDim2.new(.70,0,0,14),
+    Enum.Font.Gotham, 9, K.w3, 13)
+local SB_verTag = frm(SB_bar, K.ink3, UDim2.new(1,-76,0.5,-13), UDim2.new(0,64,0,26), 13)
+rc(SB_verTag, 13)
+sk(SB_verTag, K.gold, 1.2, .42)
+gr(SB_verTag, K.ink4, K.ink1, 145)
+lbl(SB_verTag, VER.."  ELITE",
+    UDim2.new(0,0,0,0), UDim2.new(1,0,1,0),
+    Enum.Font.GothamBold, 9, K.gold, 14, Enum.TextXAlignment.Center)
 
--- center icon card
-local iconCard=Instance.new("Frame") iconCard.BackgroundColor3=Color3.fromRGB(14,11,24)
-iconCard.BorderSizePixel=0 iconCard.AnchorPoint=Vector2.new(.5,0)
-iconCard.Position=UDim2.new(.5,0,0,70) iconCard.Size=UDim2.new(0,58,0,58) iconCard.ZIndex=11 iconCard.Parent=SB
-corner(iconCard,16) mkstroke(iconCard,CT.p,1.5)
-grad(iconCard,Color3.fromRGB(20,14,36),Color3.fromRGB(10,7,18),145)
-lbl(iconCard,"🔒",UDim2.new(0,0,0,0),UDim2.new(1,0,1,0),Enum.Font.GothamBold,28,Color3.fromRGB(255,255,255),12,Enum.TextXAlignment.Center)
+-- lock icon display
+local lockWrap = frm(SB, K.ink0, UDim2.new(.5,-52,0,82), UDim2.new(0,104,0,90), 11)
+rc(lockWrap, 20)
+gr(lockWrap, K.ink2, K.ink0, 148)
+sk(lockWrap, K.pur2, 1.5, .52)
+-- rings
+local function mkRing(par, s, tr, zi)
+    local r = frm(par, K.pur2, UDim2.new(.5,-s/2,.5,-s/2), UDim2.new(0,s,0,s), zi)
+    rc(r, 50)
+    r.BackgroundTransparency = tr
+    return r
+end
+mkRing(lockWrap, 80, 0.92, 12)
+mkRing(lockWrap, 62, 0.86, 13)
+mkRing(lockWrap, 44, 0.78, 14)
+local lockCore = frm(lockWrap, K.ink0, UDim2.new(.5,-16,.5,-16), UDim2.new(0,32,0,32), 15)
+rc(lockCore, 50)
+gr(lockCore, K.ink3, K.ink0, 145)
+sk(lockCore, K.pur3, 1.5, .42)
+lbl(lockWrap, "🔒", UDim2.new(0,0,0,0), UDim2.new(1,0,1,0),
+    Enum.Font.GothamBold, 24, K.w1, 16, Enum.TextXAlignment.Center)
 
-lbl(SB,"Enter your license key to access\nTrash Hub  ×  Marky.Dev v2.0",
-    UDim2.new(0,24,0,138),UDim2.new(1,-48,0,36),Enum.Font.Gotham,12,Color3.fromRGB(135,120,168),11,Enum.TextXAlignment.Center)
+-- deco stars
+lbl(SB, "✦", UDim2.new(.5,-84,0,90), UDim2.new(0,14,0,14), Enum.Font.GothamBold, 8, K.gold, 11, Enum.TextXAlignment.Center)
+lbl(SB, "✦", UDim2.new(.5,72,0,90), UDim2.new(0,14,0,14), Enum.Font.GothamBold, 8, K.gold, 11, Enum.TextXAlignment.Center)
 
--- input
-local KIbg=Instance.new("Frame") KIbg.BackgroundColor3=Color3.fromRGB(10,8,18)
-KIbg.Position=UDim2.new(0,22,0,178) KIbg.Size=UDim2.new(1,-44,0,46) KIbg.ZIndex=11 KIbg.Parent=SB corner(KIbg,12)
-local KIstroke=mkstroke(KIbg,Color3.fromRGB(44,28,82),1.5)
-grad(KIbg,Color3.fromRGB(13,10,22),Color3.fromRGB(8,6,15),145)
-local KInput=Instance.new("TextBox") KInput.Parent=KIbg KInput.BackgroundTransparency=1
-KInput.Position=UDim2.new(0,16,0,0) KInput.Size=UDim2.new(1,-32,1,0) KInput.Font=Enum.Font.GothamBold
-KInput.PlaceholderText="Enter license key..." KInput.PlaceholderColor3=Color3.fromRGB(60,46,85)
-KInput.Text="" KInput.TextColor3=Color3.fromRGB(230,220,255) KInput.TextSize=14 KInput.ZIndex=12 KInput.ClearTextOnFocus=false
+-- divider
+local SB_div1 = frm(SB, K.w1, UDim2.new(0.08,0,0,180), UDim2.new(0.84,0,0,1), 11)
+SB_div1.BackgroundTransparency = 0.88
+gg(SB_div1, K.pur3, K.pur1, 0)
 
-local realKey="" local masking=false
+lbl(SB, "Enter your license key to continue",
+    UDim2.new(0,28,0,188), UDim2.new(1,-56,0,16),
+    Enum.Font.GothamBold, 11, K.w2, 11, Enum.TextXAlignment.Center)
+
+-- key input
+local KWrap = frm(SB, K.ink0, UDim2.new(0,22,0,209), UDim2.new(1,-44,0,52), 11)
+rc(KWrap, 16)
+gr(KWrap, K.ink2, K.ink0, 150)
+local KIstroke = sk(KWrap, Color3.fromRGB(28,17,60), 1.8)
+
+-- icon left
+local kIconLeft = frm(KWrap, K.pur2, UDim2.new(0,3,0.5,-17), UDim2.new(0,34,0,34), 12)
+rc(kIconLeft, 13)
+kIconLeft.BackgroundTransparency = 0.68
+gr(kIconLeft, K.pur3, K.pur1, 145)
+lbl(kIconLeft, "✦", UDim2.new(0,0,0,0), UDim2.new(1,0,1,0),
+    Enum.Font.GothamBold, 14, K.gold, 13, Enum.TextXAlignment.Center)
+
+-- right glow
+local kRG = frm(KWrap, K.pur3, UDim2.new(1,-2,0.1,0), UDim2.new(0,2,0.8,0), 12)
+rc(kRG, 2)
+kRG.BackgroundTransparency = 0.65
+
+local KInput = Instance.new("TextBox")
+KInput.Parent            = KWrap
+KInput.BackgroundTransparency = 1
+KInput.Position          = UDim2.new(0,44,0,0)
+KInput.Size              = UDim2.new(1,-52,1,0)
+KInput.Font              = Enum.Font.GothamBold
+KInput.PlaceholderText   = "Enter license key..."
+KInput.PlaceholderColor3 = Color3.fromRGB(48,33,78)
+KInput.Text              = ""
+KInput.TextColor3        = Color3.fromRGB(228,218,255)
+KInput.TextSize          = 13
+KInput.ZIndex            = 13
+KInput.ClearTextOnFocus  = false
+KInput.TextEditable      = true
+
+local realKey = "" local isUpdating = false
 KInput:GetPropertyChangedSignal("Text"):Connect(function()
-    if masking then return end masking=true
-    local nd=KInput.Text local nl,ol=#nd,#realKey
-    if nl>ol then realKey=realKey..nd:sub(ol+1) elseif nl<ol then realKey=realKey:sub(1,#realKey-(ol-nl)) end
-    realKey=realKey:lower():gsub("pretpret",string.rep("*",8))
-    KInput.Text=string.rep("*",#realKey) masking=false end)
+    if isUpdating then return end isUpdating = true
+    local cur = KInput.Text
+    local curLen = #cur local realLen = #realKey
+    if curLen > realLen then
+        local added = cur:sub(realLen+1):gsub("●","")
+        realKey = realKey..added
+    elseif curLen < realLen then
+        realKey = realKey:sub(1, #realKey-(realLen-curLen))
+    end
+    realKey = realKey:lower():gsub("pretpret", string.rep("*",8))
+    KInput.Text = string.rep("●", #realKey)
+    task.defer(function() isUpdating = false end)
+end)
 
-local KStatus=lbl(SB,"",UDim2.new(0,22,0,230),UDim2.new(1,-44,0,18),Enum.Font.GothamBold,12,Color3.fromRGB(255,85,100),11,Enum.TextXAlignment.Center)
+local KStatus = lbl(SB, "", UDim2.new(0,22,0,267), UDim2.new(1,-44,0,15),
+    Enum.Font.GothamBold, 11, K.rose, 11, Enum.TextXAlignment.Center)
 
-local KBtn=Instance.new("TextButton") KBtn.Parent=SB KBtn.BackgroundColor3=CT.p
-KBtn.Position=UDim2.new(0,22,0,252) KBtn.Size=UDim2.new(1,-44,0,48)
-KBtn.Font=Enum.Font.GothamBold KBtn.Text="UNLOCK ACCESS  ⟶"
-KBtn.TextColor3=Color3.fromRGB(255,255,255) KBtn.TextSize=13 KBtn.BorderSizePixel=0 KBtn.ZIndex=11
-corner(KBtn,14)
-local KBtnG=trackGrad(grad(KBtn,CT.g1,CT.g2,135))
-KBtn.MouseEnter:Connect(function() tw(KBtn,{BackgroundColor3=CT.a},.18) end)
-KBtn.MouseLeave:Connect(function() tw(KBtn,{BackgroundColor3=CT.p},.18) end)
+-- UNLOCK BUTTON
+local KBtnBase = frm(SB, K.pur1, UDim2.new(0,22,0,286), UDim2.new(1,-44,0,56), 11)
+rc(KBtnBase, 18)
+gr(KBtnBase, K.pur3, K.pur1, 140)
+sk(KBtnBase, K.gold, 1.2, .48)
+-- inner top sheen
+local kb_sh1 = frm(KBtnBase, K.w1, UDim2.new(0,8,0,3), UDim2.new(.55,0,0,2), 12)
+rc(kb_sh1, 1)
+kb_sh1.BackgroundTransparency = 0.84
+local kb_sh2 = frm(KBtnBase, K.w1, UDim2.new(0,8,1,-5), UDim2.new(.30,0,0,1), 12)
+rc(kb_sh2, 1)
+kb_sh2.BackgroundTransparency = 0.90
+-- icon circle
+local kb_ico = frm(KBtnBase, K.w1, UDim2.new(0,12,0.5,-14), UDim2.new(0,28,0,28), 12)
+rc(kb_ico, 50)
+kb_ico.BackgroundTransparency = 0.75
+lbl(kb_ico, "⚡", UDim2.new(0,0,0,0), UDim2.new(1,0,1,0),
+    Enum.Font.GothamBold, 13, K.gold, 13, Enum.TextXAlignment.Center)
+lbl(KBtnBase, "UNLOCK  ACCESS",
+    UDim2.new(0,50,0,0), UDim2.new(1,-74,1,0),
+    Enum.Font.GothamBold, 15, K.w1, 12)
+lbl(KBtnBase, "›",
+    UDim2.new(1,-34,0,0), UDim2.new(0,26,1,0),
+    Enum.Font.GothamBold, 22, Color3.fromRGB(208,192,255), 12, Enum.TextXAlignment.Center)
 
-local divL=Instance.new("Frame") divL.BackgroundColor3=Color3.fromRGB(32,22,56) divL.BorderSizePixel=0
-divL.Position=UDim2.new(0,22,0,314) divL.Size=UDim2.new(1,-44,0,1) divL.ZIndex=11 divL.Parent=SB
-lbl(SB,"discord.gg/marky   ·   t.me/markyhub",UDim2.new(0,22,0,320),UDim2.new(1,-44,0,18),Enum.Font.Gotham,10,Color3.fromRGB(80,60,115),11,Enum.TextXAlignment.Center)
+local KBtn = Instance.new("TextButton")
+KBtn.Parent              = KBtnBase
+KBtn.BackgroundTransparency = 1
+KBtn.Size                = UDim2.new(1,0,1,0)
+KBtn.Text                = ""
+KBtn.ZIndex              = 14
+KBtn.MouseEnter:Connect(function() tw(KBtnBase, {BackgroundColor3=K.pur3}, .15) end)
+KBtn.MouseLeave:Connect(function() tw(KBtnBase, {BackgroundColor3=K.pur1}, .15) end)
 
--- ── KEY CHECK LOADER ──────────────────────────
-local SC,SC_tb,SC_tbFix,SC_tbG,SC_tbFixG,SC_fill,SC_fillG,SC_logFrame = makeLoader("KeyCheck",440,365,15)
-SC.Visible=false
-local SC_title=lbl(SC_tb,"⚙️  VERIFYING KEY...",UDim2.new(0,16,0,9),UDim2.new(.85,0,0,21),Enum.Font.GothamBold,14,Color3.fromRGB(255,255,255),17)
-local SC_sub=lbl(SC_tb,"Connecting to Marky servers...",UDim2.new(0,16,0,31),UDim2.new(.85,0,0,14),Enum.Font.Gotham,10,Color3.fromRGB(220,205,255),17)
-local SC_ord=0
-local function scLog(txt,col,o)
-    SC_ord=o or SC_ord+1 local l=Instance.new("TextLabel") l.Parent=SC_logFrame l.BackgroundTransparency=1
-    l.Size=UDim2.new(1,0,0,16) l.Font=Enum.Font.Code l.Text=txt
-    l.TextColor3=col or Color3.fromRGB(100,220,120) l.TextSize=12
-    l.TextXAlignment=Enum.TextXAlignment.Left l.LayoutOrder=SC_ord l.ZIndex=17 end
+-- footer
+local SB_div2 = frm(SB, K.w1, UDim2.new(0.08,0,0,350), UDim2.new(0.84,0,0,1), 11)
+SB_div2.BackgroundTransparency = 0.90
+lbl(SB, "✦  discord.gg/marky  ·  "..WM.."  ✦",
+    UDim2.new(0,22,0,356), UDim2.new(1,-44,0,14),
+    Enum.Font.Gotham, 8, K.w5, 11, Enum.TextXAlignment.Center)
 
--- ── HUB LOADER ────────────────────────────────
-local SD,SD_tb,SD_tbFix,SD_tbG,SD_tbFixG,SD_fill,SD_fillG,SD_logFrame = makeLoader("HubLoad",440,365,15)
-SD.Visible=false
-lbl(SD_tb,"⚡  LOADING TRASH HUB v2.0...",UDim2.new(0,16,0,9),UDim2.new(.85,0,0,21),Enum.Font.GothamBold,14,Color3.fromRGB(255,255,255),17)
-local SD_sub=lbl(SD_tb,"Key verified — Preparing modules...",UDim2.new(0,16,0,31),UDim2.new(.85,0,0,14),Enum.Font.Gotham,10,Color3.fromRGB(220,205,255),17)
-local SD_pct=lbl(SD,"0%",UDim2.new(1,-54,0,62),UDim2.new(0,36,0,12),Enum.Font.GothamBold,10,Color3.fromRGB(150,130,190),16,Enum.TextXAlignment.Right)
-local SD_ord=0
-local function sdLog(txt,col)
-    SD_ord=SD_ord+1 local l=Instance.new("TextLabel") l.Parent=SD_logFrame l.BackgroundTransparency=1
-    l.Size=UDim2.new(1,0,0,16) l.Font=Enum.Font.Code l.Text=txt
-    l.TextColor3=col or Color3.fromRGB(100,220,120) l.TextSize=12
-    l.TextXAlignment=Enum.TextXAlignment.Left l.LayoutOrder=SD_ord l.ZIndex=17 end
-local SD_LOGS={
-    {"[OK ]  Key verified — Elite License!",         Color3.fromRGB(80,255,160)},
-    {"[OK ]  Injecting premium UI v2 framework...",  Color3.fromRGB(100,220,120)},
-    {"[OK ]  Loading trade hook modules...",         Color3.fromRGB(100,220,120)},
-    {"[OK ]  Loading visual render engine...",       Color3.fromRGB(100,220,120)},
-    {"[WARN]  Anti-detect fingerprint injected.",    Color3.fromRGB(255,200,80)},
-    {"[OK ]  Decrypting brainrot module...",         Color3.fromRGB(100,220,120)},
-    {"[OK ]  Patching anti-cheat bypass...",         Color3.fromRGB(100,220,120)},
-    {"[OK ]  All systems nominal — Launching hub...",Color3.fromRGB(80,255,160)},
+-- ┌─────────────────────────────────────┐
+-- │      LOADER  FACTORY               │
+-- └─────────────────────────────────────┘
+local function buildLoader(name, w, h, zi, iconTxt, titleTxt)
+    local bg = mkPanel(Root, UDim2.new(.5,0,.5,0), UDim2.new(0,w,0,h), zi, 22)
+    bg.AnchorPoint = Vector2.new(.5,.5)
+    bg.Visible     = false
+    bg.Name        = name
+
+    local bar = mkBar(bg, 70, zi+1)
+    mkLogo(bar, iconTxt, 14, zi+2)
+    lbl(bar, titleTxt,
+        UDim2.new(0,72,0,13), UDim2.new(.74,0,0,22),
+        Enum.Font.GothamBold, 14, K.w1, zi+2)
+    local subLbl = lbl(bar, "Please wait...",
+        UDim2.new(0,72,0,37), UDim2.new(.74,0,0,14),
+        Enum.Font.Gotham, 9, K.w3, zi+2)
+
+    local pBg = frm(bg, K.ink0, UDim2.new(0,20,0,78), UDim2.new(1,-40,0,5), zi+1)
+    rc(pBg, 3)
+    sk(pBg, K.ink4, 1)
+    local pFill = frm(pBg, K.pur2, UDim2.new(0,0,0,0), UDim2.new(0,0,1,0), zi+2)
+    rc(pFill, 3)
+    gr(pFill, K.pur4, K.pur1, 0)
+    local pDot = frm(pFill, K.pur4, UDim2.new(1,-5,-.8,0), UDim2.new(0,10,0,10), zi+3)
+    rc(pDot, 50)
+    pDot.BackgroundTransparency = 0.45
+
+    local pctLbl = lbl(bg, "0%", UDim2.new(1,-58,0,74), UDim2.new(0,42,0,12),
+        Enum.Font.GothamBold, 9, K.pur4, zi+1, Enum.TextXAlignment.Right)
+
+    local logF = frm(bg, K.ink0, UDim2.new(0,20,0,90), UDim2.new(1,-40,1,-96), zi+1)
+    logF.BackgroundTransparency = 1
+    local ll = Instance.new("UIListLayout")
+    ll.Parent    = logF
+    ll.Padding   = UDim.new(0, 2)
+
+    local foot = frm(bg, K.ink0, UDim2.new(0,0,1,-24), UDim2.new(1,0,0,24), zi+1)
+    foot.BackgroundTransparency = 0.65
+    rc(foot, 22)
+    lbl(foot, "✦  "..WM.."  ·  MARKY.DEV",
+        UDim2.new(0,0,0,0), UDim2.new(1,0,1,0),
+        Enum.Font.Gotham, 8, K.w5, zi+2, Enum.TextXAlignment.Center)
+
+    return bg, pFill, logF, subLbl, pctLbl
+end
+
+local SC, SC_fill, SC_logF, SC_sub, SC_pct = buildLoader("SC", 488, 372, 15, "⚙️", "VERIFYING  KEY...")
+local SD, SD_fill, SD_logF, SD_sub, SD_pct = buildLoader("SD", 488, 372, 15, "⚡", "LOADING  TRASH HUB  "..VER)
+
+local SC_ord = 0
+local function scLog(txt, col, o)
+    SC_ord = o or SC_ord+1
+    local l = Instance.new("TextLabel")
+    l.Parent              = SC_logF
+    l.BackgroundTransparency = 1
+    l.Size                = UDim2.new(1,0,0,12)
+    l.Font                = Enum.Font.Code
+    l.Text                = txt
+    l.TextColor3          = col
+    l.TextSize            = 9
+    l.TextXAlignment      = Enum.TextXAlignment.Left
+    l.LayoutOrder         = SC_ord
+    l.ZIndex              = 17
+end
+
+local SD_ord = 0
+local function sdLog(txt, col)
+    SD_ord = SD_ord+1
+    local l = Instance.new("TextLabel")
+    l.Parent              = SD_logF
+    l.BackgroundTransparency = 1
+    l.Size                = UDim2.new(1,0,0,12)
+    l.Font                = Enum.Font.Code
+    l.Text                = txt
+    l.TextColor3          = col
+    l.TextSize            = 9
+    l.TextXAlignment      = Enum.TextXAlignment.Left
+    l.LayoutOrder         = SD_ord
+    l.ZIndex              = 17
+end
+
+local SD_LOGS = {
+    {"[PASS]  License tier verified.",                K.mint},
+    {"[PASS]  Midnight UI engine mounting...",        K.mint},
+    {"[PASS]  Trade hook system initialized.",        K.mint},
+    {"[PASS]  Render pipeline v3 active.",            K.mint},
+    {"[WARN]  Anti-detection bypass enabled.",        K.gold},
+    {"[PASS]  All subsystems operational.",           K.mint},
+    {"[PASS]  Performance monitor calibrated.",       K.mint},
+    {"[PASS]  14/14 modules ready — launching ✦",    K.mint},
 }
 
--- ═══════════════════════════════════════════════════════════
---  SCREEN E — MAIN HUB  ★ v2.0 ULTRA PREMIUM
--- ═══════════════════════════════════════════════════════════
-local SW     = 148
-local FULL_H = 450
-local MINI_H = 54
+-- ┌─────────────────────────────────────┐
+-- │      MAIN  HUB                     │
+-- └─────────────────────────────────────┘
+local SW    = 170
+local FH    = 484
+local MH    = 66
 
-local SE=Instance.new("Frame") SE.Name="MainHub" SE.Parent=Root
-SE.BackgroundColor3=Color3.fromRGB(8,7,14) SE.AnchorPoint=Vector2.new(.5,.5)
-SE.Position=UDim2.new(.5,0,.5,0) SE.Size=UDim2.new(0,590,0,FULL_H)
-SE.Visible=false SE.Active=true SE.Draggable=true
-corner(SE,18)
-local mainStroke=mkstroke(SE,CT.p,2.2)
-shadow(SE,.34,16)
-grad(SE,Color3.fromRGB(12,10,20),Color3.fromRGB(6,5,10),145)
+local SE = mkPanel(Root, UDim2.new(.5,0,.5,0), UDim2.new(0,632,0,FH), 1, 22)
+SE.AnchorPoint = Vector2.new(.5,.5)
+SE.Visible     = false
+SE.Active      = true
+SE.Draggable   = true
+local SE_stk   = SE:FindFirstChildOfClass("UIStroke")
 
--- ── TOP BAR ──────────────────────────────────────────────
-local HT=Instance.new("Frame") HT.BackgroundColor3=CT.p HT.BorderSizePixel=0
-HT.Size=UDim2.new(1,0,0,MINI_H) HT.Parent=SE corner(HT,16)
-local topGrad=trackGrad(grad(HT,CT.g1,CT.g2,135))
-local HT_fix=Instance.new("Frame") HT_fix.BackgroundColor3=CT.p HT_fix.BorderSizePixel=0
-HT_fix.Position=UDim2.new(0,0,.5,0) HT_fix.Size=UDim2.new(1,0,.5,0) HT_fix.Parent=HT
-local HT_fixG=trackGrad(grad(HT_fix,CT.g1,CT.g2,135))
+-- ── TOPBAR ──────────────────────────────
+local HT = frm(SE, K.ink0, UDim2.new(0,0,0,0), UDim2.new(1,0,0,MH), 3)
+rc(HT, 22)
+gr(HT, Color3.fromRGB(14,9,28), Color3.fromRGB(5,3,10), 150)
+sk(HT, Color3.fromRGB(20,13,44), 1)
+frm(HT, K.w1, UDim2.new(0,0,1,-1), UDim2.new(1,0,0,1), 4).BackgroundTransparency = 0.84
+local HT_acc = frm(HT, K.pur2, UDim2.new(0,0,0.1,0), UDim2.new(0,3,0.8,0), 4)
+rc(HT_acc, 2)
+gr(HT_acc, K.pur4, K.pur1, 180)
+-- neon top edge on hub
+local SE_nTop = frm(SE, K.pur3, UDim2.new(0.1,0,0,-1), UDim2.new(0.8,0,0,2), 4)
+rc(SE_nTop, 2)
+gr(SE_nTop, K.pur4, K.pur1, 0)
 
--- logo pill
-local logoPill=Instance.new("Frame") logoPill.BackgroundColor3=Color3.fromRGB(255,255,255)
-logoPill.BackgroundTransparency=0.88 logoPill.BorderSizePixel=0
-logoPill.Position=UDim2.new(0,12,0.5,-15) logoPill.Size=UDim2.new(0,30,0,30)
-logoPill.ZIndex=3 logoPill.Parent=HT corner(logoPill,50)
-lbl(logoPill,"⚡",UDim2.new(0,0,0,0),UDim2.new(1,0,1,0),Enum.Font.GothamBold,15,Color3.fromRGB(255,255,255),4,Enum.TextXAlignment.Center)
+-- logo
+local HT_logo = mkLogo(HT, "⚡", 12, 4, true)
 
-lbl(HT,"TRASH HUB  ×  MARKY.DEV",UDim2.new(0,50,0,8),UDim2.new(0,220,0,21),Enum.Font.GothamBold,13,Color3.fromRGB(255,255,255),3)
-lbl(HT,"v2.0  ·  Elite Edition  ·  "..FAKE_USER,UDim2.new(0,50,0,30),UDim2.new(0,220,0,14),Enum.Font.Gotham,10,Color3.fromRGB(225,210,255),3)
+-- titles
+lbl(HT, "TRASH HUB  ×  MARKY.DEV",
+    UDim2.new(0,70,0,12), UDim2.new(0,200,0,22),
+    Enum.Font.GothamBold, 13, K.w1, 4)
+lbl(HT, VER.."  ·  Midnight Luxury  ·  m4rkyxtrashub",
+    UDim2.new(0,70,0,35), UDim2.new(0,200,0,12),
+    Enum.Font.Gotham, 9, K.w3, 4)
 
--- ★ FPS + PING display in topbar
-local statsPill=Instance.new("Frame") statsPill.BackgroundColor3=Color3.fromRGB(0,0,0)
-statsPill.BackgroundTransparency=0.5 statsPill.BorderSizePixel=0
-statsPill.Position=UDim2.new(0.5,-65,0.5,-13) statsPill.Size=UDim2.new(0,130,0,26)
-statsPill.ZIndex=3 statsPill.Parent=HT corner(statsPill,13)
-mkstroke(statsPill,Color3.fromRGB(255,255,255),0.6).Transparency=0.7
+-- STAT PILL — clean
+local statWrap = frm(HT, K.ink1, UDim2.new(.5,-92,0.5,-17), UDim2.new(0,184,0,34), 4)
+rc(statWrap, 17)
+sk(statWrap, K.ink4, 1.5)
+gr(statWrap, K.ink2, K.ink0, 148)
+-- left dot
+local fpsDot = frm(statWrap, K.mint, UDim2.new(0,8,0.5,-4), UDim2.new(0,8,0,8), 5)
+rc(fpsDot, 50)
+fpsDot.BackgroundTransparency = 0.35
+local fpsTL = lbl(statWrap, "FPS  —", UDim2.new(0,20,0,0), UDim2.new(.5,-24,1,0),
+    Enum.Font.GothamBold, 11, K.mint, 6, Enum.TextXAlignment.Center)
+-- divider
+local stDiv = frm(statWrap, K.w1, UDim2.new(.5,-.5,0.1,0), UDim2.new(0,1,0.8,0), 5)
+stDiv.BackgroundTransparency = 0.82
+-- right dot
+local pingDot = frm(statWrap, K.sky, UDim2.new(.5,8,0.5,-4), UDim2.new(0,8,0,8), 5)
+rc(pingDot, 50)
+pingDot.BackgroundTransparency = 0.35
+local pingTL = lbl(statWrap, "PING  —", UDim2.new(.5,20,0,0), UDim2.new(.5,-24,1,0),
+    Enum.Font.GothamBold, 11, K.sky, 6, Enum.TextXAlignment.Center)
 
-local fpsTxt=lbl(statsPill,"FPS  —",UDim2.new(0,8,0,0),UDim2.new(0.5,-4,1,0),Enum.Font.GothamBold,11,Color3.fromRGB(120,255,180),4,Enum.TextXAlignment.Center)
-local divPipe=lbl(statsPill,"│",UDim2.new(0.5,-4,0,0),UDim2.new(0,8,1,0),Enum.Font.Gotham,12,Color3.fromRGB(255,255,255),4,Enum.TextXAlignment.Center)
-divPipe.TextTransparency=0.65
-local pingTxt=lbl(statsPill,"PING  —",UDim2.new(0.5,4,0,0),UDim2.new(0.5,-8,1,0),Enum.Font.GothamBold,11,Color3.fromRGB(120,200,255),4,Enum.TextXAlignment.Center)
+-- TIER BADGE
+local tierWrap = frm(HT, K.ink2, UDim2.new(1,-158,0.5,-17), UDim2.new(0,126,0,34), 4)
+rc(tierWrap, 17)
+local tierStk = sk(tierWrap, K.gold, 1.5, .38)
+gr(tierWrap, K.ink3, K.ink1, 148)
+local tierIco = lbl(tierWrap, "⬡", UDim2.new(0,8,0,0), UDim2.new(0,22,1,0),
+    Enum.Font.GothamBold, 13, K.gold, 5, Enum.TextXAlignment.Center)
+local tierTxt = lbl(tierWrap, "LOADING", UDim2.new(0,30,0,0), UDim2.new(1,-40,1,0),
+    Enum.Font.GothamBold, 10, K.gold, 5)
 
--- LICENSED badge
-local licBadge=Instance.new("Frame") licBadge.BackgroundColor3=Color3.fromRGB(255,255,255)
-licBadge.BackgroundTransparency=0.85 licBadge.BorderSizePixel=0
-licBadge.Position=UDim2.new(1,-128,0.5,-12) licBadge.Size=UDim2.new(0,68,0,24)
-licBadge.ZIndex=3 licBadge.Parent=HT corner(licBadge,12)
-mkstroke(licBadge,Color3.fromRGB(255,255,255),0.7).Transparency=0.55
-lbl(licBadge,"✓  ELITE",UDim2.new(0,0,0,0),UDim2.new(1,0,1,0),Enum.Font.GothamBold,9,Color3.fromRGB(210,255,215),3,Enum.TextXAlignment.Center)
+-- WIN BUTTONS
+local function mkWBtn(col, xOff, char)
+    local bg = frm(HT, col, UDim2.new(1,xOff,0.5,-10), UDim2.new(0,20,0,20), 5)
+    rc(bg, 50)
+    bg.BackgroundTransparency = 0.25
+    sk(bg, K.w1, 1, .70)
+    local b = Instance.new("TextButton")
+    b.Parent              = bg
+    b.BackgroundTransparency = 1
+    b.Size                = UDim2.new(1,0,1,0)
+    b.Font                = Enum.Font.GothamBold
+    b.Text                = char
+    b.TextColor3          = K.w1
+    b.TextSize            = 10
+    b.ZIndex              = 6
+    b.MouseEnter:Connect(function() tw(bg, {BackgroundTransparency=0}, .12) end)
+    b.MouseLeave:Connect(function() tw(bg, {BackgroundTransparency=0.25}, .12) end)
+    return b
+end
+local CloseB = mkWBtn(K.rose,  -32, "✕")
+local MinB   = mkWBtn(K.gold,  -56, "–")
 
--- Close & Minimize
-local function makeTopBtn(col,xPos,txt)
-    local b=Instance.new("TextButton") b.Parent=HT b.BackgroundColor3=col
-    b.BackgroundTransparency=0.2 b.Position=UDim2.new(1,xPos,0.5,-9)
-    b.Size=UDim2.new(0,18,0,18) b.Font=Enum.Font.GothamBold b.Text=txt
-    b.TextColor3=Color3.fromRGB(255,255,255) b.TextSize=10 b.BorderSizePixel=0
-    corner(b,50) return b end
-local CloseB=makeTopBtn(Color3.fromRGB(255,65,75),-28,"✕")
-local MinB=makeTopBtn(Color3.fromRGB(255,185,0),-50,"–")
-CloseB.MouseButton1Click:Connect(function() Root:Destroy() end)
-
-local minimized=false
+CloseB.MouseButton1Click:Connect(function()
+    setRender(false)
+    tw(SE, {Size=UDim2.new(0,0,0,0), BackgroundTransparency=1}, .22,
+       Enum.EasingStyle.Back, Enum.EasingDirection.In)
+    task.wait(.24)
+    Root:Destroy()
+end)
+local minimized = false
 MinB.MouseButton1Click:Connect(function()
-    minimized=not minimized
-    if minimized then tw(SE,{Size=UDim2.new(0,590,0,MINI_H)},.32) MinB.Text="+"
-    else tw(SE,{Size=UDim2.new(0,590,0,FULL_H)},.32) MinB.Text="–" end end)
+    minimized = not minimized
+    if minimized then tw(SE, {Size=UDim2.new(0,632,0,MH)}, .3) MinB.Text = "+"
+    else tw(SE, {Size=UDim2.new(0,632,0,FH)}, .3) MinB.Text = "–" end
+end)
 
--- ── SIDEBAR ──────────────────────────────────────────────
-local SidePanel=Instance.new("Frame") SidePanel.BackgroundColor3=Color3.fromRGB(10,9,17)
-SidePanel.BorderSizePixel=0 SidePanel.Position=UDim2.new(0,0,0,MINI_H)
-SidePanel.Size=UDim2.new(0,SW,1,-MINI_H) SidePanel.Parent=SE corner(SidePanel,12)
-local SideFix=Instance.new("Frame") SideFix.BackgroundColor3=Color3.fromRGB(10,9,17)
-SideFix.BorderSizePixel=0 SideFix.Position=UDim2.new(.5,0,0,0) SideFix.Size=UDim2.new(.5,0,1,0) SideFix.Parent=SidePanel
-grad(SidePanel,Color3.fromRGB(12,11,20),Color3.fromRGB(8,7,14),180)
+-- ── SIDEBAR ─────────────────────────────
+local Side = frm(SE, K.ink1, UDim2.new(0,0,0,MH), UDim2.new(0,SW,1,-MH), 2)
+rc(Side, 18)
+frm(Side, K.ink1, UDim2.new(.5,0,0,0), UDim2.new(.5,0,1,0), 2)
+gr(Side, K.ink2, K.ink0, 188)
+sk(Side, K.ink4, 1)
+-- right line
+local sideLine = frm(Side, K.pur2, UDim2.new(1,-1,0,14), UDim2.new(0,1,1,-28), 3)
+rc(sideLine, 2)
+gr(sideLine, K.pur4, K.pur1, 180)
 
--- separator line right side
-local sideSep=Instance.new("Frame") sideSep.BorderSizePixel=0
-sideSep.BackgroundColor3=CT.p sideSep.BackgroundTransparency=0.65
-sideSep.Position=UDim2.new(1,-1,0,10) sideSep.Size=UDim2.new(0,1,1,-20)
-sideSep.ZIndex=2 sideSep.Parent=SidePanel
+-- sidebar header
+local sideHdr = frm(Side, K.ink0, UDim2.new(0,0,0,0), UDim2.new(1,0,0,46), 3)
+rc(sideHdr, 18)
+sideHdr.BackgroundTransparency = 0.55
+gr(sideHdr, K.ink2, K.ink0, 180)
+frm(Side, K.pur2, UDim2.new(0.06,0,0,44), UDim2.new(0.88,0,0,1), 4).BackgroundTransparency = 0.78
+local shDot = frm(sideHdr, K.gold, UDim2.new(0,13,0.5,-5), UDim2.new(0,10,0,10), 4)
+rc(shDot, 50)
+shDot.BackgroundTransparency = 0.35
+lbl(sideHdr, "NAVIGATION", UDim2.new(0,30,0,0), UDim2.new(1,-34,1,0),
+    Enum.Font.GothamBold, 8, K.pur4, 4)
 
--- MENU label header
-local menuHeader=Instance.new("Frame") menuHeader.BackgroundTransparency=1
-menuHeader.BorderSizePixel=0 menuHeader.Size=UDim2.new(1,0,0,28) menuHeader.LayoutOrder=0 menuHeader.Parent=SidePanel
-pad(menuHeader,12,0,0,0)
-lbl(menuHeader,"M E N U",UDim2.new(0,12,0,0),UDim2.new(1,-12,1,0),Enum.Font.GothamBold,9,CT.p,2)
+local sideLL = Instance.new("UIListLayout")
+sideLL.Parent    = Side
+sideLL.SortOrder = Enum.SortOrder.LayoutOrder
+sideLL.Padding   = UDim.new(0,1)
+local spPad = frm(Side, K.ink0, UDim2.new(0,0,0,0), UDim2.new(1,0,0,46), 2)
+spPad.BackgroundTransparency = 1
+spPad.LayoutOrder = 0
 
-local SideLL=Instance.new("UIListLayout") SideLL.Parent=SidePanel
-SideLL.SortOrder=Enum.SortOrder.LayoutOrder SideLL.Padding=UDim.new(0,1)
+-- sidebar bottom brand
+local sideBot = frm(SE, K.ink0, UDim2.new(0,6,1,-23), UDim2.new(0,SW-12,0,16), 3)
+rc(sideBot, 8)
+sideBot.BackgroundTransparency = 0.65
+sk(sideBot, K.w5, 1)
+lbl(sideBot, "✦  MARKY.DEV  "..VER, UDim2.new(0,0,0,0), UDim2.new(1,0,1,0),
+    Enum.Font.GothamBold, 7, K.w5, 4, Enum.TextXAlignment.Center)
 
--- bottom brand
-lbl(SE,"© 2024  MARKY.DEV",UDim2.new(0,0,1,-20),UDim2.new(0,SW,0,16),
-    Enum.Font.Gotham,8,Color3.fromRGB(44,34,68),3,Enum.TextXAlignment.Center)
+local Content = frm(SE, K.ink0, UDim2.new(0,SW+9,0,MH+9), UDim2.new(1,-(SW+13),1,-(MH+11)), 2)
+Content.BackgroundTransparency = 1
 
--- ── CONTENT ──────────────────────────────────────────────
-local ContentBG=Instance.new("Frame") ContentBG.BackgroundTransparency=1
-ContentBG.Position=UDim2.new(0,SW+7,0,MINI_H+7)
-ContentBG.Size=UDim2.new(1,-(SW+11),1,-(MINI_H+9)) ContentBG.Parent=SE
+-- WATERMARK
+local WMF = frm(Root, K.ink2, UDim2.new(0,14,0,14), UDim2.new(0,248,0,38))
+rc(WMF, 19)
+WMF.Visible = false
+local WMStk = sk(WMF, K.pur2, 1.8)
+gr(WMF, K.ink3, K.ink0, 140)
+sd(WMF, .44, 4, 42)
+sk(WMF, K.gold, 1, .52)
+local wm_acc = frm(WMF, K.pur2, UDim2.new(0,0,0.1,0), UDim2.new(0,3,0.8,0), 2)
+rc(wm_acc, 2)
+gr(wm_acc, K.pur4, K.pur1, 180)
+lbl(WMF, "⚡  "..WM.."  ✦  "..VER,
+    UDim2.new(0,6,0,0), UDim2.new(1,-10,1,0),
+    Enum.Font.GothamBold, 10, K.w1, 3, Enum.TextXAlignment.Center)
 
--- ── WATERMARK ────────────────────────────────────────────
-local WMF=Instance.new("Frame") WMF.Parent=Root WMF.BackgroundColor3=Color3.fromRGB(9,8,16)
-WMF.Position=UDim2.new(0,12,0,12) WMF.Size=UDim2.new(0,200,0,32) WMF.Visible=false
-corner(WMF,16) local WMStroke=mkstroke(WMF,CT.p,1.8)
-local WMG=trackGrad(grad(WMF,CT.g1,CT.g2,135))
-shadow(WMF,.55,6)
-lbl(WMF,"⚡  "..WATERMARK_TAG,UDim2.new(0,0,0,0),UDim2.new(1,0,1,0),Enum.Font.GothamBold,11,Color3.fromRGB(255,255,255),1,Enum.TextXAlignment.Center)
-
--- ══ TAB SYSTEM ════════════════════════════════════════════
-local tabPages={} local tabBtns={} local tabBars={} local activeTab=nil
-
--- spacer for menu header
-local spacer=Instance.new("Frame") spacer.BackgroundTransparency=1 spacer.BorderSizePixel=0
-spacer.Size=UDim2.new(1,0,0,28) spacer.LayoutOrder=0 spacer.Parent=SidePanel
+-- ┌─────────────────────────────────────┐
+-- │      TAB  SYSTEM                   │
+-- └─────────────────────────────────────┘
+local Pages   = {}
+local TabBtns = {}
+local TabBars = {}
+local activeTab = nil
 
 local function setTab(name)
-    if minimized then minimized=false tw(SE,{Size=UDim2.new(0,590,0,FULL_H)},.3) MinB.Text="–" end
-    for n,pg in pairs(tabPages) do pg.Visible=(n==name) end
-    for n,row in pairs(tabBtns) do
-        local isActive=(n==name)
-        tabBars[n].Visible=isActive
-        tw(row,{BackgroundColor3=isActive and Color3.fromRGB(18,14,32) or Color3.fromRGB(10,9,17),BackgroundTransparency=isActive and 0 or 1},.2)
-        local icoLbl=row:FindFirstChild("ico") local nameLbl=row:FindFirstChild("nm")
-        if icoLbl then icoLbl.TextColor3=isActive and CT.a or Color3.fromRGB(80,68,110) end
-        if nameLbl then nameLbl.TextColor3=isActive and Color3.fromRGB(255,255,255) or Color3.fromRGB(88,74,120) end
+    if minimized then
+        minimized = false
+        tw(SE, {Size=UDim2.new(0,632,0,FH)}, .3)
+        MinB.Text = "–"
     end
-    activeTab=name end
+    for n, pg in pairs(Pages) do pg.Visible = (n == name) end
+    for n, row in pairs(TabBtns) do
+        local on  = (n == name)
+        TabBars[n].Visible = on
+        local ico = row:FindFirstChild("_i")
+        local nm  = row:FindFirstChild("_n")
+        local ib  = row:FindFirstChild("_ib")
+        local pl  = row:FindFirstChild("_pl")
+        tw(row, {BackgroundColor3=on and K.ink3 or K.ink1, BackgroundTransparency=on and 0 or 1}, .2)
+        if ico then tw(ico, {TextColor3=on and K.gold or K.w4}, .2) end
+        if nm  then tw(nm,  {TextColor3=on and K.w1  or K.w4}, .2) end
+        if ib  then tw(ib,  {BackgroundTransparency=on and 0.62 or 0.90}, .2) end
+        if pl  then tw(pl,  {BackgroundTransparency=on and 0.90 or 1}, .2) end
+    end
+    activeTab = name
+end
 
-local function mkTab(name,icon,order)
-    local row=Instance.new("Frame") row.Parent=SidePanel row.BackgroundColor3=Color3.fromRGB(10,9,17)
-    row.BackgroundTransparency=1 row.BorderSizePixel=0 row.Size=UDim2.new(1,0,0,42) row.LayoutOrder=order
+local function mkTab(name, icon, order)
+    local row = frm(Side, K.ink1, UDim2.new(0,0,0,0), UDim2.new(1,0,0,46), 3)
+    row.BackgroundTransparency = 1
+    row.LayoutOrder = order
+    rc(row, 12)
 
-    -- left accent bar
-    local bar=Instance.new("Frame") bar.Name="bar" bar.BackgroundColor3=CT.p bar.BorderSizePixel=0
-    bar.Position=UDim2.new(0,0,.15,0) bar.Size=UDim2.new(0,3,.7,0) bar.Visible=false bar.ZIndex=4 bar.Parent=row corner(bar,2)
-    -- subtle bg pill when active
-    local activeBG=Instance.new("Frame") activeBG.Name="activeBG" activeBG.BackgroundColor3=CT.p
-    activeBG.BackgroundTransparency=0.88 activeBG.BorderSizePixel=0
-    activeBG.Position=UDim2.new(0,6,0.5,-14) activeBG.Size=UDim2.new(1,-12,0,28)
-    activeBG.Visible=false activeBG.ZIndex=2 activeBG.Parent=row corner(activeBG,8)
+    -- gold bar
+    local bar = frm(row, K.gold, UDim2.new(0,0,0.12,0), UDim2.new(0,3,0.76,0), 5)
+    rc(bar, 2)
+    gr(bar, K.gold, K.goldd, 180)
+    bar.Visible = false
 
-    local ico=Instance.new("TextLabel") ico.Name="ico" ico.Parent=row ico.BackgroundTransparency=1
-    ico.Position=UDim2.new(0,14,0,0) ico.Size=UDim2.new(0,20,1,0)
-    ico.Font=Enum.Font.GothamBold ico.Text=icon ico.TextSize=14
-    ico.TextColor3=Color3.fromRGB(80,68,110) ico.ZIndex=3 ico.TextXAlignment=Enum.TextXAlignment.Center
-    local nm=Instance.new("TextLabel") nm.Name="nm" nm.Parent=row nm.BackgroundTransparency=1
-    nm.Position=UDim2.new(0,38,0,0) nm.Size=UDim2.new(1,-44,1,0)
-    nm.Font=Enum.Font.GothamBold nm.Text=name nm.TextSize=12
-    nm.TextColor3=Color3.fromRGB(88,74,120) nm.ZIndex=3 nm.TextXAlignment=Enum.TextXAlignment.Left
+    -- hover pill
+    local pl = frm(row, K.pur2, UDim2.new(0,4,0.5,-17), UDim2.new(1,-8,0,34), 3)
+    pl.Name = "_pl"
+    rc(pl, 12)
+    pl.BackgroundTransparency = 1
 
-    local ob=Instance.new("TextButton") ob.Parent=row ob.BackgroundTransparency=1 ob.Size=UDim2.new(1,0,1,0) ob.Text="" ob.ZIndex=5
-    ob.MouseEnter:Connect(function() if activeTab~=name then tw(row,{BackgroundColor3=Color3.fromRGB(15,12,25),BackgroundTransparency=0},.15) end end)
-    ob.MouseLeave:Connect(function() if activeTab~=name then tw(row,{BackgroundColor3=Color3.fromRGB(10,9,17),BackgroundTransparency=1},.15) end end)
+    -- icon bg
+    local ib = frm(row, K.pur2, UDim2.new(0,10,0.5,-14), UDim2.new(0,28,0,28), 4)
+    ib.Name = "_ib"
+    rc(ib, 10)
+    ib.BackgroundTransparency = 0.90
 
-    local pg=Instance.new("ScrollingFrame") pg.Parent=ContentBG pg.BackgroundTransparency=1
-    pg.Size=UDim2.new(1,0,1,0) pg.BorderSizePixel=0 pg.ScrollBarThickness=2
-    pg.ScrollBarImageColor3=CT.p pg.CanvasSize=UDim2.new(0,0,0,0) pg.Visible=false
-    local ll=Instance.new("UIListLayout") ll.Parent=pg ll.SortOrder=Enum.SortOrder.LayoutOrder ll.Padding=UDim.new(0,5)
-    ll:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        pg.CanvasSize=UDim2.new(0,0,0,ll.AbsoluteContentSize.Y+12) end)
+    local ico = Instance.new("TextLabel")
+    ico.Name              = "_i"
+    ico.Parent            = row
+    ico.BackgroundTransparency = 1
+    ico.Position          = UDim2.new(0,10,0,0)
+    ico.Size              = UDim2.new(0,28,1,0)
+    ico.Font              = Enum.Font.GothamBold
+    ico.Text              = icon
+    ico.TextSize          = 14
+    ico.TextColor3        = K.w4
+    ico.ZIndex            = 5
+    ico.TextXAlignment    = Enum.TextXAlignment.Center
 
-    tabPages[name]=pg tabBtns[name]=row tabBars[name]=bar
+    local nm = Instance.new("TextLabel")
+    nm.Name               = "_n"
+    nm.Parent             = row
+    nm.BackgroundTransparency = 1
+    nm.Position           = UDim2.new(0,44,0,0)
+    nm.Size               = UDim2.new(1,-50,1,0)
+    nm.Font               = Enum.Font.GothamBold
+    nm.Text               = name
+    nm.TextSize           = 11
+    nm.TextColor3         = K.w4
+    nm.ZIndex             = 5
+    nm.TextXAlignment     = Enum.TextXAlignment.Left
+
+    local ob = Instance.new("TextButton")
+    ob.Parent              = row
+    ob.BackgroundTransparency = 1
+    ob.Size                = UDim2.new(1,0,1,0)
+    ob.Text                = ""
+    ob.ZIndex              = 6
+    ob.MouseEnter:Connect(function()
+        if activeTab ~= name then
+            tw(row, {BackgroundColor3=K.ink3, BackgroundTransparency=0}, .14)
+            tw(pl, {BackgroundTransparency=0.92}, .14)
+        end
+    end)
+    ob.MouseLeave:Connect(function()
+        if activeTab ~= name then
+            tw(row, {BackgroundColor3=K.ink1, BackgroundTransparency=1}, .14)
+            tw(pl, {BackgroundTransparency=1}, .14)
+        end
+    end)
     ob.MouseButton1Click:Connect(function() setTab(name) end)
-    return pg end
 
--- ══ WIDGETS ═══════════════════════════════════════════════
-local function mkSection(parent,title,order)
-    local f=Instance.new("Frame") f.Parent=parent f.BackgroundTransparency=1
-    f.BorderSizePixel=0 f.Size=UDim2.new(1,-2,0,24) f.LayoutOrder=order or 0
-    local lLine=Instance.new("Frame") lLine.BackgroundColor3=CT.p lLine.BackgroundTransparency=0.25
-    lLine.BorderSizePixel=0 lLine.Position=UDim2.new(0,2,0.5,-1) lLine.Size=UDim2.new(0,14,0,2) lLine.Parent=f corner(lLine,1)
-    local rLine=Instance.new("Frame") rLine.BackgroundColor3=CT.p rLine.BackgroundTransparency=0.78
-    rLine.BorderSizePixel=0 rLine.Position=UDim2.new(0,76,0.5,-1) rLine.Size=UDim2.new(1,-78,0,1) rLine.Parent=f corner(rLine,1)
-    lbl(f,title,UDim2.new(0,20,0,0),UDim2.new(1,-22,1,0),Enum.Font.GothamBold,9,CT.a,1)
-    return f end
+    local pg = Instance.new("ScrollingFrame")
+    pg.Parent              = Content
+    pg.BackgroundTransparency = 1
+    pg.Size                = UDim2.new(1,0,1,0)
+    pg.BorderSizePixel     = 0
+    pg.ScrollBarThickness  = 2
+    pg.ScrollBarImageColor3 = K.pur3
+    pg.ScrollBarImageTransparency = .45
+    pg.CanvasSize          = UDim2.new(0,0,0,0)
+    pg.Visible             = false
+    local pll = Instance.new("UIListLayout")
+    pll.Parent    = pg
+    pll.SortOrder = Enum.SortOrder.LayoutOrder
+    pll.Padding   = UDim.new(0,5)
+    pll:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        pg.CanvasSize = UDim2.new(0,0,0, pll.AbsoluteContentSize.Y+18)
+    end)
 
-local function mkToggle(parent,name,order,defOn)
-    local row=Instance.new("Frame") row.Parent=parent row.BackgroundColor3=Color3.fromRGB(13,11,22)
-    row.BorderSizePixel=0 row.Size=UDim2.new(1,-2,0,40) row.LayoutOrder=order or 0
-    corner(row,12) mkstroke(row,Color3.fromRGB(22,16,42),1)
-    grad(row,Color3.fromRGB(16,13,26),Color3.fromRGB(11,9,19),145)
-    lbl(row,name,UDim2.new(0,14,0,0),UDim2.new(0.66,0,1,0),Enum.Font.Gotham,12,Color3.fromRGB(195,184,218),1)
-    local bg=Instance.new("Frame") bg.BackgroundColor3=defOn and CT.p or Color3.fromRGB(26,20,46)
-    bg.Position=UDim2.new(1,-56,0.5,-11) bg.Size=UDim2.new(0,44,0,22) bg.BorderSizePixel=0 bg.Parent=row corner(bg,50)
-    if defOn then trackGrad(grad(bg,CT.g1,CT.g2,135)) end
-    local knob=Instance.new("Frame") knob.BackgroundColor3=Color3.fromRGB(255,255,255)
-    knob.BorderSizePixel=0 knob.Position=defOn and UDim2.new(1,-20,0.5,-9) or UDim2.new(0,2,0.5,-9)
-    knob.Size=UDim2.new(0,18,0,18) knob.Parent=bg corner(knob,50)
-    local tog=defOn or false
-    local ob=Instance.new("TextButton") ob.Parent=row ob.BackgroundTransparency=1 ob.Size=UDim2.new(1,0,1,0) ob.Text=""
+    Pages[name]   = pg
+    TabBtns[name] = row
+    TabBars[name] = bar
+    return pg
+end
+
+-- ┌─────────────────────────────────────┐
+-- │      WIDGET  LIBRARY               │
+-- └─────────────────────────────────────┘
+local function mkSec(parent, title, order)
+    local w = frm(parent, K.ink0, UDim2.new(0,0,0,0), UDim2.new(1,-2,0,26), 1)
+    w.BackgroundTransparency = 1
+    w.LayoutOrder = order or 0
+    -- diamond + lines
+    lbl(w, "◆", UDim2.new(0,0,0.5,-8), UDim2.new(0,14,0,16),
+        Enum.Font.GothamBold, 7, K.gold, 2, Enum.TextXAlignment.Center)
+    local ll = frm(w, K.goldd, UDim2.new(0,14,0.5,-1), UDim2.new(0,12,0,1), 1)
+    rc(ll, 1)
+    ll.BackgroundTransparency = 0.40
+    local lr = frm(w, K.pur2, UDim2.new(0,82,0.5,-1), UDim2.new(1,-84,0,1), 1)
+    rc(lr, 1)
+    lr.BackgroundTransparency = 0.80
+    lbl(w, string.upper(title), UDim2.new(0,28,0,0), UDim2.new(1,-30,1,0),
+        Enum.Font.GothamBold, 8, K.gold, 2)
+    return w
+end
+
+local function mkToggle(parent, name, order, defOn, badge)
+    local row = frm(parent, K.ink2, UDim2.new(0,0,0,0), UDim2.new(1,-2,0,50), 1)
+    row.LayoutOrder = order or 0
+    rc(row, 14)
+    sk(row, K.ink3, 1.2)
+    gr(row, K.ink3, K.ink1, 152)
+
+    -- left color strip
+    local strip = frm(row, K.gold, UDim2.new(0,0,0.12,0), UDim2.new(0,3,0.76,0), 2)
+    rc(strip, 2)
+    strip.BackgroundTransparency = defOn and 0.05 or 0.90
+    gr(strip, K.gold, K.goldd, 180)
+
+    lbl(row, name, UDim2.new(0,16,0,0), UDim2.new(0.56,0,1,0),
+        Enum.Font.Gotham, 12, K.w2, 2)
+
+    if badge then
+        local bf = frm(row, Color3.fromRGB(255,158,0), UDim2.new(0.56,8,0.5,-11), UDim2.new(0,76,0,22), 3)
+        rc(bf, 11)
+        sk(bf, Color3.fromRGB(255,200,80), 1, .48)
+        gr(bf, Color3.fromRGB(255,182,0), Color3.fromRGB(218,135,0), 135)
+        lbl(bf, badge, UDim2.new(0,0,0,0), UDim2.new(1,0,1,0),
+            Enum.Font.GothamBold, 8, Color3.fromRGB(28,14,0), 4, Enum.TextXAlignment.Center)
+    end
+
+    -- track
+    local track = frm(row, defOn and K.pur1 or Color3.fromRGB(15,9,32),
+        UDim2.new(1,-68,0.5,-15), UDim2.new(0,54,0,30), 2)
+    rc(track, 50)
+    local tStk = sk(track,
+        defOn and K.pur3 or Color3.fromRGB(26,14,58), 1,
+        defOn and 0.48 or 0)
+    if defOn then gr(track, K.pur3, K.pur1, 140) end
+
+    local knob = frm(track, K.w1,
+        defOn and UDim2.new(1,-24,0.5,-12) or UDim2.new(0,3,0.5,-12),
+        UDim2.new(0,24,0,24), 3)
+    rc(knob, 50)
+    sd(knob, .55, 2, 8)
+    sk(knob, Color3.fromRGB(218,208,255), 1, .55)
+
+    local tog = defOn or false
+    local ob = Instance.new("TextButton")
+    ob.Parent              = row
+    ob.BackgroundTransparency = 1
+    ob.Size                = UDim2.new(1,0,1,0)
+    ob.Text                = ""
+    ob.ZIndex              = 4
     ob.MouseButton1Click:Connect(function()
-        tog=not tog
-        tw(bg,{BackgroundColor3=tog and CT.p or Color3.fromRGB(26,20,46)})
-        tw(knob,{Position=tog and UDim2.new(1,-20,0.5,-9) or UDim2.new(0,2,0.5,-9)}) end)
-    row.MouseEnter:Connect(function() tw(row,{BackgroundColor3=Color3.fromRGB(18,15,30)},.14) end)
-    row.MouseLeave:Connect(function() tw(row,{BackgroundColor3=Color3.fromRGB(13,11,22)},.14) end)
-    return row end
+        tog = not tog
+        tw(track, {BackgroundColor3 = tog and K.pur1 or Color3.fromRGB(15,9,32)})
+        tw(knob,  {Position = tog and UDim2.new(1,-24,0.5,-12) or UDim2.new(0,3,0.5,-12)})
+        tw(strip, {BackgroundTransparency = tog and 0.05 or 0.90})
+        tStk.Color       = tog and K.pur3 or Color3.fromRGB(26,14,58)
+        tStk.Transparency = tog and 0.48 or 0
+    end)
+    row.MouseEnter:Connect(function() tw(row, {BackgroundColor3=K.ink4}, .13) end)
+    row.MouseLeave:Connect(function() tw(row, {BackgroundColor3=K.ink2}, .13) end)
+    return row, function() return tog end
+end
 
-local function mkSlider(parent,name,minV,maxV,defV,order)
-    local row=Instance.new("Frame") row.Parent=parent row.BackgroundColor3=Color3.fromRGB(13,11,22)
-    row.BorderSizePixel=0 row.Size=UDim2.new(1,-2,0,54) row.LayoutOrder=order or 0
-    corner(row,12) mkstroke(row,Color3.fromRGB(22,16,42),1)
-    grad(row,Color3.fromRGB(16,13,26),Color3.fromRGB(11,9,19),145)
-    lbl(row,name,UDim2.new(0,14,0,7),UDim2.new(.64,0,0,18),Enum.Font.Gotham,12,Color3.fromRGB(195,184,218),1)
-    local vLbl=lbl(row,tostring(defV),UDim2.new(.64,0,0,7),UDim2.new(.32,0,0,18),Enum.Font.GothamBold,12,CT.a,1,Enum.TextXAlignment.Right)
-    local track=Instance.new("TextButton") track.Parent=row track.BackgroundColor3=Color3.fromRGB(18,14,32)
-    track.BorderSizePixel=0 track.Position=UDim2.new(0,14,0,34) track.Size=UDim2.new(1,-28,0,7) track.Text="" corner(track,4)
-    local fill=Instance.new("Frame") fill.BackgroundColor3=CT.p fill.BorderSizePixel=0
-    local frac0=(defV-minV)/(maxV-minV) fill.Size=UDim2.new(frac0,0,1,0) fill.Parent=track corner(fill,4)
-    trackGrad(grad(fill,CT.g1,CT.g2,0))
-    local knob=Instance.new("Frame") knob.BackgroundColor3=Color3.fromRGB(255,255,255)
-    knob.AnchorPoint=Vector2.new(0.5,0.5) knob.Position=UDim2.new(frac0,0,0.5,0)
-    knob.Size=UDim2.new(0,15,0,15) knob.BorderSizePixel=0 knob.Parent=track corner(knob,50)
-    mkstroke(knob,CT.p,1.8)
-    local dragging=false
+local function mkSlider(parent, name, minV, maxV, defV, order)
+    local row = frm(parent, K.ink2, UDim2.new(0,0,0,0), UDim2.new(1,-2,0,64), 1)
+    row.LayoutOrder = order or 0
+    rc(row, 14)
+    sk(row, K.ink3, 1.2)
+    gr(row, K.ink3, K.ink1, 152)
+
+    frm(row, K.gold, UDim2.new(0,0,0.12,0), UDim2.new(0,3,0.76,0), 2).BackgroundTransparency = 0.88
+
+    lbl(row, name, UDim2.new(0,16,0,10), UDim2.new(.56,0,0,18),
+        Enum.Font.Gotham, 12, K.w2, 2)
+    local vLbl = lbl(row, tostring(defV), UDim2.new(.56,0,0,10), UDim2.new(.40,0,0,18),
+        Enum.Font.GothamBold, 12, K.pur4, 2, Enum.TextXAlignment.Right)
+
+    local tBg = frm(row, K.ink0, UDim2.new(0,16,0,38), UDim2.new(1,-32,0,8), 2)
+    rc(tBg, 4)
+    sk(tBg, K.ink4, 1)
+
+    local fill = frm(tBg, K.pur1, UDim2.new(0,0,0,0), UDim2.new((defV-minV)/(maxV-minV),0,1,0), 3)
+    rc(fill, 4)
+    gr(fill, K.pur4, K.pur1, 0)
+    local fGlow = frm(fill, K.pur4, UDim2.new(1,-8,-.8,0), UDim2.new(0,14,0,14), 4)
+    rc(fGlow, 50)
+    fGlow.BackgroundTransparency = 0.52
+
+    local knob = frm(tBg, K.w1, UDim2.new((defV-minV)/(maxV-minV),0,0.5,0), UDim2.new(0,18,0,18), 4)
+    knob.AnchorPoint = Vector2.new(.5,.5)
+    rc(knob, 50)
+    sk(knob, K.pur3, 1.5, .28)
+    sd(knob, .55, 2, 6)
+
+    local drag = false
+    local tBtn = Instance.new("TextButton")
+    tBtn.Parent              = tBg
+    tBtn.BackgroundTransparency = 1
+    tBtn.Size                = UDim2.new(1,0,3,-8)
+    tBtn.Position            = UDim2.new(0,0,0.5,-12)
+    tBtn.Text                = ""
+    tBtn.ZIndex              = 5
+
     local function upd(x)
-        local fr=math.clamp((x-track.AbsolutePosition.X)/track.AbsoluteSize.X,0,1)
-        vLbl.Text=tostring(math.floor(minV+fr*(maxV-minV)))
-        tw(fill,{Size=UDim2.new(fr,0,1,0)},.07) tw(knob,{Position=UDim2.new(fr,0,0.5,0)},.07) end
-    track.MouseButton1Down:Connect(function() dragging=true upd(UserInputService:GetMouseLocation().X) end)
+        local fr = math.clamp((x - tBg.AbsolutePosition.X) / tBg.AbsoluteSize.X, 0, 1)
+        vLbl.Text = tostring(math.floor(minV + fr*(maxV-minV)))
+        tw(fill,  {Size=UDim2.new(fr,0,1,0)}, .07)
+        tw(knob,  {Position=UDim2.new(fr,0,.5,0)}, .07)
+    end
+    tBtn.MouseButton1Down:Connect(function()
+        drag = true
+        upd(UserInputService:GetMouseLocation().X)
+    end)
     UserInputService.InputChanged:Connect(function(i)
-        if dragging and i.UserInputType==Enum.UserInputType.MouseMovement then upd(i.Position.X) end end)
+        if drag and i.UserInputType == Enum.UserInputType.MouseMovement then
+            upd(i.Position.X)
+        end
+    end)
     UserInputService.InputEnded:Connect(function(i)
-        if i.UserInputType==Enum.UserInputType.MouseButton1 then dragging=false end end)
-    row.MouseEnter:Connect(function() tw(row,{BackgroundColor3=Color3.fromRGB(18,15,30)},.14) end)
-    row.MouseLeave:Connect(function() tw(row,{BackgroundColor3=Color3.fromRGB(13,11,22)},.14) end)
-    return row end
+        if i.UserInputType == Enum.UserInputType.MouseButton1 then drag = false end
+    end)
+    row.MouseEnter:Connect(function() tw(row, {BackgroundColor3=K.ink4}, .13) end)
+    row.MouseLeave:Connect(function() tw(row, {BackgroundColor3=K.ink2}, .13) end)
+    return row
+end
 
-local function mkComingSoon(parent,mainTxt,subTxt)
-    local f=Instance.new("Frame") f.Parent=parent f.BackgroundColor3=Color3.fromRGB(11,9,18)
-    f.BorderSizePixel=0 f.Size=UDim2.new(1,-2,0,210) f.LayoutOrder=1 corner(f,16)
-    mkstroke(f,CT.p,1.5) grad(f,Color3.fromRGB(15,11,26),Color3.fromRGB(7,6,13),145)
-    -- glow ring
-    local ring=Instance.new("Frame") ring.BackgroundColor3=CT.p ring.BackgroundTransparency=0.72
-    ring.AnchorPoint=Vector2.new(.5,.5) ring.Position=UDim2.new(.5,0,.3,0)
-    ring.Size=UDim2.new(0,48,0,48) ring.BorderSizePixel=0 ring.ZIndex=2 ring.Parent=f corner(ring,50)
-    local ringInner=Instance.new("Frame") ringInner.BackgroundColor3=Color3.fromRGB(11,9,18)
-    ringInner.AnchorPoint=Vector2.new(.5,.5) ringInner.Position=UDim2.new(.5,0,.5,0)
-    ringInner.Size=UDim2.new(0.62,0,.62,0) ringInner.BorderSizePixel=0 ringInner.ZIndex=3 ringInner.Parent=ring corner(ringInner,50)
-    lbl(ring,"✦",UDim2.new(0,0,0,0),UDim2.new(1,0,1,0),Enum.Font.GothamBold,18,CT.p,4,Enum.TextXAlignment.Center)
-    local l1=Instance.new("TextLabel") l1.Parent=f l1.BackgroundTransparency=1
-    l1.AnchorPoint=Vector2.new(.5,.5) l1.Position=UDim2.new(.5,0,.62,0)
-    l1.Size=UDim2.new(.9,0,0,28) l1.Font=Enum.Font.GothamBold l1.Text=mainTxt
-    l1.TextColor3=CT.p l1.TextSize=16 l1.ZIndex=2
-    local l2=Instance.new("TextLabel") l2.Parent=f l2.BackgroundTransparency=1
-    l2.AnchorPoint=Vector2.new(.5,.5) l2.Position=UDim2.new(.5,0,.82,0)
-    l2.Size=UDim2.new(.85,0,0,36) l2.Font=Enum.Font.Gotham l2.Text=subTxt
-    l2.TextColor3=Color3.fromRGB(88,72,122) l2.TextSize=11 l2.TextWrapped=true l2.ZIndex=2
-    return l1 end
+local function mkComingSoon(parent, mainTxt, subTxt, lo)
+    local f = frm(parent, K.ink2, UDim2.new(0,0,0,0), UDim2.new(1,-2,0,232), 1)
+    f.LayoutOrder = lo or 1
+    rc(f, 20)
+    sk(f, K.ink3, 1.5)
+    gr(f, K.ink3, K.ink0, 152)
 
--- ══ POPULATE TABS ════════════════════════════════════════
-local tp=mkTab("Trade","💎",1)
-mkSection(tp,"Trade Features",1)
-mkToggle(tp,"Visual Trade",2,true)
-mkToggle(tp,"Auto Accept",3,false)
-mkToggle(tp,"Freeze Trade",4,false)
-mkToggle(tp,"Visual Brainrot",5,false)
-mkSection(tp,"Timing Settings",6)
-mkSlider(tp,"Accept Delay (ms)",0,500,35,7)
-mkSlider(tp,"Visual Intensity",0,100,72,8)
-mkSection(tp,"Advanced",9)
-mkToggle(tp,"Anti Decline",10,true)
-mkToggle(tp,"Trade Logger",11,false)
+    -- ring system
+    local function ring(s, tr, zi)
+        local r = frm(f, K.pur2, UDim2.new(.5,-s/2,.22,-s/2), UDim2.new(0,s,0,s), zi)
+        rc(r, 50)
+        r.BackgroundTransparency = tr
+        return r
+    end
+    ring(88, 0.92, 2) ring(66, 0.86, 3) ring(46, 0.78, 4)
+    local rCore = frm(f, K.ink0, UDim2.new(.5,-16,.22,-16), UDim2.new(0,32,0,32), 5)
+    rc(rCore, 50)
+    gr(rCore, K.ink3, K.ink0, 145)
+    sk(rCore, K.pur3, 1.5, .44)
 
-local bp=mkTab("Brainrot","🧠",2)
-mkSection(bp,"Brainrot Engine",1)
-mkToggle(bp,"Enable Visual Brainrot",2,false)
-mkToggle(bp,"Rainbow Text",3,false)
-mkToggle(bp,"Spam Mode",4,false)
-local biRow=Instance.new("Frame") biRow.Parent=bp biRow.BackgroundColor3=Color3.fromRGB(13,11,22)
-biRow.BorderSizePixel=0 biRow.Size=UDim2.new(1,-2,0,78) biRow.LayoutOrder=5
-corner(biRow,12) mkstroke(biRow,Color3.fromRGB(22,16,42),1) grad(biRow,Color3.fromRGB(16,13,26),Color3.fromRGB(11,9,19),145)
-lbl(biRow,"📝  Brainrot Text:",UDim2.new(0,14,0,7),UDim2.new(1,-28,0,16),Enum.Font.GothamBold,11,Color3.fromRGB(175,160,210),1)
-local biIbg=Instance.new("Frame") biIbg.Parent=biRow biIbg.BackgroundColor3=Color3.fromRGB(8,6,16)
-biIbg.Position=UDim2.new(0,10,0,26) biIbg.Size=UDim2.new(1,-20,0,36) corner(biIbg,9) mkstroke(biIbg,Color3.fromRGB(38,24,68),1.5)
-local biIn=Instance.new("TextBox") biIn.Parent=biIbg biIn.BackgroundTransparency=1
-biIn.Position=UDim2.new(0,12,0,0) biIn.Size=UDim2.new(1,-24,1,0) biIn.Font=Enum.Font.Gotham
-biIn.PlaceholderText="Type brainrot here..." biIn.PlaceholderColor3=Color3.fromRGB(56,42,80)
-biIn.Text="" biIn.TextColor3=Color3.fromRGB(220,210,240) biIn.TextSize=12
-biIn.TextXAlignment=Enum.TextXAlignment.Left biIn.ClearTextOnFocus=false
-mkSection(bp,"Preview",6)
-local prevRow=Instance.new("Frame") prevRow.Parent=bp prevRow.BackgroundColor3=Color3.fromRGB(13,11,22)
-prevRow.BorderSizePixel=0 prevRow.Size=UDim2.new(1,-2,0,48) prevRow.LayoutOrder=7
-corner(prevRow,12) mkstroke(prevRow,Color3.fromRGB(22,16,42),1) grad(prevRow,Color3.fromRGB(16,13,26),Color3.fromRGB(11,9,19),145)
-local prevLbl=lbl(prevRow,"[ No brainrot active ]",UDim2.new(0,14,0,0),UDim2.new(1,-28,1,0),Enum.Font.GothamBold,11,Color3.fromRGB(100,85,135),1)
+    local l1 = lbl(f, "◆", UDim2.new(.5,-16,.22,-16), UDim2.new(0,32,0,32),
+        Enum.Font.GothamBold, 15, K.pur4, 6, Enum.TextXAlignment.Center)
+
+    -- center divider
+    local cd = frm(f, K.w1, UDim2.new(.08,0,.54,0), UDim2.new(.84,0,0,1), 3)
+    cd.BackgroundTransparency = 0.90
+    gg(cd, K.pur3, K.pur1, 0)
+
+    local l2 = lbl(f, mainTxt,
+        UDim2.new(.5,0,.64,0), UDim2.new(.88,0,0,28),
+        Enum.Font.GothamBold, 20, K.pur4, 3, Enum.TextXAlignment.Center)
+    l2.AnchorPoint = Vector2.new(.5,.5)
+
+    local l3 = lbl(f, subTxt,
+        UDim2.new(.5,0,.82,0), UDim2.new(.84,0,0,36),
+        Enum.Font.Gotham, 10, K.w4, 3, Enum.TextXAlignment.Center)
+    l3.AnchorPoint = Vector2.new(.5,.5)
+    l3.TextWrapped = true
+
+    lbl(f, "— — — — — — — — — —", UDim2.new(.5,0,.94,0), UDim2.new(.8,0,0,14),
+        Enum.Font.Gotham, 8, K.w5, 3, Enum.TextXAlignment.Center)
+
+    return l1, l2
+end
+
+local function mkStatCard(parent, title, icon, valCol, order)
+    local card = frm(parent, K.ink2, UDim2.new(0,0,0,0), UDim2.new(1,-2,0,92), 1)
+    card.LayoutOrder = order
+    rc(card, 16)
+    sk(card, K.ink3, 1.2)
+    gr(card, K.ink3, K.ink1, 152)
+
+    local acc = frm(card, valCol, UDim2.new(0,0,.08,0), UDim2.new(0,3,.84,0), 2)
+    rc(acc, 2)
+    acc.BackgroundTransparency = 0.15
+
+    -- icon rings
+    local iO = frm(card, valCol, UDim2.new(0,14,.5,-28), UDim2.new(0,56,0,56), 2)
+    rc(iO, 50)
+    iO.BackgroundTransparency = 0.85
+    local iM = frm(card, valCol, UDim2.new(0,21,.5,-21), UDim2.new(0,42,0,42), 3)
+    rc(iM, 50)
+    iM.BackgroundTransparency = 0.75
+    local iI = frm(card, valCol, UDim2.new(0,28,.5,-14), UDim2.new(0,28,0,28), 4)
+    rc(iI, 50)
+    iI.BackgroundTransparency = 0.65
+    lbl(iI, icon, UDim2.new(0,0,0,0), UDim2.new(1,0,1,0),
+        Enum.Font.GothamBold, 18, valCol, 5, Enum.TextXAlignment.Center)
+
+    lbl(card, title, UDim2.new(0,78,0,15), UDim2.new(.56,0,0,12),
+        Enum.Font.GothamBold, 8, K.w4, 3)
+    local valL = lbl(card, "—", UDim2.new(0,78,0,27), UDim2.new(.66,0,0,34),
+        Enum.Font.GothamBold, 30, valCol, 3)
+
+    local bBg = frm(card, K.ink0, UDim2.new(0,14,1,-14), UDim2.new(1,-28,0,5), 2)
+    rc(bBg, 3)
+    sk(bBg, K.ink4, 1)
+    local bFill = frm(bBg, valCol, UDim2.new(0,0,0,0), UDim2.new(0,0,1,0), 3)
+    rc(bFill, 3)
+
+    card.MouseEnter:Connect(function() tw(card, {BackgroundColor3=K.ink4}, .13) end)
+    card.MouseLeave:Connect(function() tw(card, {BackgroundColor3=K.ink2}, .13) end)
+    return valL, bFill
+end
+
+-- ┌─────────────────────────────────────┐
+-- │      VISUAL  ENGINE                │
+-- └─────────────────────────────────────┘
+local korbloxOn  = false
+local headlessOn = false
+local vParts     = {}
+
+local function clearVis(tag)
+    for i = #vParts, 1, -1 do
+        local p = vParts[i]
+        if p and p.Parent and p:GetAttribute("tag") == tag then
+            pcall(function() p:Destroy() end)
+            table.remove(vParts, i)
+        end
+    end
+end
+
+local function applyKorblox()
+    clearVis("korblox")
+    local char = LP.Character
+    if not char then return end
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if not hum then return end
+    local r15 = hum.RigType == Enum.HumanoidRigType.R15
+
+    local function mkLeg(name)
+        local leg = char:FindFirstChild(name)
+        if not leg then return end
+        local p = Instance.new("Part")
+        p:SetAttribute("tag", "korblox")
+        p.Name        = "KVis_"..name
+        p.Size        = Vector3.new(1.05, 2.05, 1.05)
+        p.Transparency = 0
+        p.CanCollide  = false
+        p.Anchored    = false
+        p.CastShadow  = true
+        p.Color        = Color3.fromRGB(15,15,15)
+        p.Material    = Enum.Material.SmoothPlastic
+        p.Parent      = char
+        local m = Instance.new("SpecialMesh")
+        m.MeshType  = Enum.MeshType.FileMesh
+        m.MeshId    = "rbxassetid://319336350"
+        m.TextureId = "rbxassetid://319336355"
+        m.Scale     = Vector3.new(1.08,1.08,1.08)
+        m.Parent    = p
+        local wc = Instance.new("WeldConstraint")
+        wc.Part0 = leg wc.Part1 = p wc.Parent = p
+        local sel = Instance.new("SelectionBox")
+        sel:SetAttribute("tag", "korblox")
+        sel.Adornee            = p
+        sel.Color3             = Color3.fromRGB(82,0,205)
+        sel.LineThickness      = 0.015
+        sel.SurfaceTransparency = 0.9
+        sel.Parent             = char
+        table.insert(vParts, p)
+        table.insert(vParts, sel)
+    end
+
+    if r15 then
+        mkLeg("LeftUpperLeg") mkLeg("LeftLowerLeg")
+        mkLeg("RightUpperLeg") mkLeg("RightLowerLeg")
+    else
+        mkLeg("Left Leg") mkLeg("Right Leg")
+    end
+end
+
+local function applyHeadless()
+    clearVis("headless")
+    local char = LP.Character
+    if not char then return end
+    local head = char:FindFirstChild("Head")
+    if not head then return end
+    head.Transparency = 1
+    for _, v in ipairs(head:GetChildren()) do
+        if v:IsA("SpecialMesh") or v:IsA("Decal") then
+            v.Transparency = 1
+        end
+    end
+    head:SetAttribute("tag", "headless")
+    table.insert(vParts, head)
+    for _, acc in ipairs(char:GetChildren()) do
+        if acc:IsA("Accessory") then
+            local h = acc:FindFirstChild("Handle")
+            if h then
+                local ok = false
+                for _, a in ipairs(h:GetChildren()) do
+                    if a:IsA("Attachment") and head:FindFirstChild(a.Name) then
+                        ok = true break
+                    end
+                end
+                if ok then
+                    h.Transparency = 1
+                    h:SetAttribute("tag", "headless")
+                    table.insert(vParts, h)
+                end
+            end
+        end
+    end
+end
+
+local function removeHeadless()
+    local char = LP.Character
+    if not char then return end
+    local head = char:FindFirstChild("Head")
+    if head then
+        head.Transparency = 0
+        head:SetAttribute("tag", nil)
+        for _, v in ipairs(head:GetChildren()) do
+            if v:IsA("SpecialMesh") or v:IsA("Decal") then
+                v.Transparency = 0
+            end
+        end
+    end
+    for _, p in ipairs(vParts) do
+        if p and p.Parent and p:GetAttribute("tag") == "headless" then
+            pcall(function() p.Transparency = 0 p:SetAttribute("tag", nil) end)
+        end
+    end
+    clearVis("headless")
+end
+
+LP.CharacterAdded:Connect(function()
+    vParts = {}
+    task.wait(1.5)
+    if korbloxOn  then applyKorblox()  end
+    if headlessOn then applyHeadless() end
+end)
+
+-- ┌─────────────────────────────────────┐
+-- │      BUILD  TABS                   │
+-- └─────────────────────────────────────┘
+-- TRADE
+local tp = mkTab("Trade", "💎", 1)
+mkSec(tp, "Trade Features", 1)
+mkToggle(tp, "Visual Trade", 2, true)
+mkToggle(tp, "Auto Accept", 3, false)
+mkToggle(tp, "Freeze Trade", 4, false)
+mkToggle(tp, "Visual Brainrot", 5, false)
+mkSec(tp, "Timing Config", 6)
+mkSlider(tp, "Accept Delay (ms)", 0, 500, 35, 7)
+mkSlider(tp, "Visual Intensity", 0, 100, 72, 8)
+mkSec(tp, "Advanced", 9)
+mkToggle(tp, "Anti Decline", 10, true)
+mkToggle(tp, "Trade Logger", 11, false, "UPDATING")
+mkToggle(tp, "Instant Confirm", 12, false, "UPDATING")
+
+-- BRAINROT
+local bp = mkTab("Brainrot", "🧠", 2)
+mkSec(bp, "Engine", 1)
+mkToggle(bp, "Enable Visual Brainrot", 2, false)
+mkToggle(bp, "Rainbow Text", 3, false)
+mkToggle(bp, "Spam Mode", 4, false, "UPDATING")
+
+local biWrap = frm(bp, K.ink2, UDim2.new(0,0,0,0), UDim2.new(1,-2,0,86), 1)
+biWrap.LayoutOrder = 5
+rc(biWrap, 14)
+sk(biWrap, K.ink3, 1.2)
+gr(biWrap, K.ink3, K.ink1, 152)
+lbl(biWrap, "📝  Brainrot Text",
+    UDim2.new(0,16,0,8), UDim2.new(1,-32,0,18),
+    Enum.Font.GothamBold, 11, K.w2, 2)
+local biIbg = frm(biWrap, K.ink0, UDim2.new(0,12,0,30), UDim2.new(1,-24,0,40))
+rc(biIbg, 12)
+sk(biIbg, K.ink4, 1.5)
+local biIn = Instance.new("TextBox")
+biIn.Parent              = biIbg
+biIn.BackgroundTransparency = 1
+biIn.Position            = UDim2.new(0,14,0,0)
+biIn.Size                = UDim2.new(1,-28,1,0)
+biIn.Font                = Enum.Font.Gotham
+biIn.PlaceholderText     = "Type brainrot here..."
+biIn.PlaceholderColor3   = Color3.fromRGB(46,30,72)
+biIn.Text                = ""
+biIn.TextColor3          = Color3.fromRGB(218,208,245)
+biIn.TextSize            = 12
+biIn.TextXAlignment      = Enum.TextXAlignment.Left
+biIn.ClearTextOnFocus    = false
+
+mkSec(bp, "Live Preview", 6)
+local prevWrap = frm(bp, K.ink2, UDim2.new(0,0,0,0), UDim2.new(1,-2,0,52), 1)
+prevWrap.LayoutOrder = 7
+rc(prevWrap, 14)
+sk(prevWrap, K.pur2, 1, .68)
+gr(prevWrap, K.ink3, K.ink1, 152)
+frm(prevWrap, K.pur3, UDim2.new(0,0,0.1,0), UDim2.new(0,3,0.8,0), 2).BackgroundTransparency = 0.45
+local prevLbl = lbl(prevWrap, "[ No brainrot active ]",
+    UDim2.new(0,14,0,0), UDim2.new(1,-28,1,0),
+    Enum.Font.GothamBold, 11, K.w4, 2)
 biIn:GetPropertyChangedSignal("Text"):Connect(function()
-    if biIn.Text~="" then prevLbl.Text="▶  "..biIn.Text prevLbl.TextColor3=CT.a
-    else prevLbl.Text="[ No brainrot active ]" prevLbl.TextColor3=Color3.fromRGB(100,85,135) end end)
-mkSection(bp,"Brainrot Settings",8)
-mkSlider(bp,"Brainrot Speed",1,10,5,9)
-mkSlider(bp,"Brainrot Size",10,100,50,10)
+    if biIn.Text ~= "" then
+        prevLbl.Text       = "▶  "..biIn.Text
+        prevLbl.TextColor3 = K.pur4
+    else
+        prevLbl.Text       = "[ No brainrot active ]"
+        prevLbl.TextColor3 = K.w4
+    end
+end)
+mkSec(bp, "Settings", 8)
+mkSlider(bp, "Speed", 1, 10, 5, 9)
+mkSlider(bp, "Size", 10, 100, 50, 10)
 
-local sp=mkTab("Steal","🕵️",3)
-local stealLbl=mkComingSoon(sp,"COMING SOON","Feature under development\nStay tuned → discord.gg/marky")
+-- STEAL / TRADE LIST
+local stp = mkTab("Steal", "🕵️", 3)
+local sI1, sT1 = mkComingSoon(stp, "COMING SOON", "Under active development\ndiscord.gg/marky", 1)
+local tlp = mkTab("Trade List", "📋", 4)
+local sI2, sT2 = mkComingSoon(tlp, "COMING SOON", "Arriving next patch\ndiscord.gg/marky", 1)
 
-local tlp=mkTab("Trade List","📋",4)
-local tlLbl=mkComingSoon(tlp,"COMING SOON","Trade list coming soon\nStay tuned → discord.gg/marky")
+-- PLAYER
+local pp = mkTab("Player", "👤", 5)
+mkSec(pp, "Visual Cosmetics", 1)
 
-local pp=mkTab("Player","👤",5)
-local upLbl=mkComingSoon(pp,"UPDATING . . .","Player module is being rewritten\nETA unknown — stay tuned")
+local infoF = frm(pp, K.ink2, UDim2.new(0,0,0,0), UDim2.new(1,-2,0,44), 1)
+infoF.LayoutOrder = 2
+rc(infoF, 14)
+sk(infoF, K.pur2, 1.5, .48)
+gr(infoF, K.ink3, K.ink1, 152)
+frm(infoF, K.pur3, UDim2.new(0,0,0.1,0), UDim2.new(0,3,0.8,0), 2).BackgroundTransparency = 0.32
+lbl(infoF, "✦  Client-side only  —  hanya kamu yang bisa lihat",
+    UDim2.new(0,12,0,0), UDim2.new(1,-24,1,0),
+    Enum.Font.GothamBold, 10, K.pur4, 2, Enum.TextXAlignment.Center)
 
--- ★ PERFORMANCE TAB — FPS & PING
-local perf=mkTab("Performance","📊",6)
-mkSection(perf,"Live Stats",1)
+-- KORBLOX CARD
+local function mkVisCard(parent, lo, accentCol, iconTxt, titleTxt, subTxt)
+    local row = frm(parent, K.ink2, UDim2.new(0,0,0,0), UDim2.new(1,-2,0,64), 1)
+    row.LayoutOrder = lo
+    rc(row, 14)
+    sk(row, K.ink3, 1.5)
+    gr(row, K.ink3, K.ink1, 152)
 
-local function makeStatCard(parent,title,icon,col,order)
-    local card=Instance.new("Frame") card.Parent=parent card.BackgroundColor3=Color3.fromRGB(13,11,22)
-    card.BorderSizePixel=0 card.Size=UDim2.new(1,-2,0,72) card.LayoutOrder=order corner(card,14)
-    mkstroke(card,Color3.fromRGB(22,16,42),1) grad(card,Color3.fromRGB(17,13,28),Color3.fromRGB(10,8,17),145)
-    lbl(card,icon,UDim2.new(0,16,0,10),UDim2.new(0,32,0,32),Enum.Font.GothamBold,22,col,2,Enum.TextXAlignment.Center)
-    lbl(card,title,UDim2.new(0,52,0,10),UDim2.new(0.5,0,0,18),Enum.Font.GothamBold,11,Color3.fromRGB(155,140,185),2)
-    local val=lbl(card,"—",UDim2.new(0,52,0,28),UDim2.new(0.55,0,0,26),Enum.Font.GothamBold,22,col,2)
-    -- bar bg
-    local barBG=Instance.new("Frame") barBG.BackgroundColor3=Color3.fromRGB(18,14,32)
-    barBG.BorderSizePixel=0 barBG.Position=UDim2.new(0,16,1,-14) barBG.Size=UDim2.new(1,-32,0,5) barBG.Parent=card corner(barBG,3)
-    local barFill=Instance.new("Frame") barFill.BackgroundColor3=col barFill.BorderSizePixel=0
-    barFill.Size=UDim2.new(0,0,1,0) barFill.Parent=barBG corner(barFill,3)
-    card.MouseEnter:Connect(function() tw(card,{BackgroundColor3=Color3.fromRGB(18,15,30)},.14) end)
-    card.MouseLeave:Connect(function() tw(card,{BackgroundColor3=Color3.fromRGB(13,11,22)},.14) end)
-    return val,barFill end
+    local acc = frm(row, accentCol, UDim2.new(0,0,0.10,0), UDim2.new(0,3,0.80,0), 2)
+    rc(acc, 2)
+    acc.BackgroundTransparency = 0.90
 
-local fpsVal,fpsBar=makeStatCard(perf,"FPS","⚡",Color3.fromRGB(100,255,175),2)
-local pingVal,pingBar=makeStatCard(perf,"PING (ms)","📶",Color3.fromRGB(100,195,255),3)
-mkSection(perf,"Performance",4)
-mkToggle(perf,"FPS Unlocker",5,true)
-mkToggle(perf,"Low Latency Mode",6,false)
-mkToggle(perf,"Render Optimizer",7,false)
+    local iO = frm(row, accentCol, UDim2.new(0,10,0.5,-27), UDim2.new(0,54,0,54), 2)
+    rc(iO, 50)
+    iO.BackgroundTransparency = 0.82
+    local iM = frm(row, accentCol, UDim2.new(0,17,0.5,-20), UDim2.new(0,40,0,40), 3)
+    rc(iM, 50)
+    iM.BackgroundTransparency = 0.72
+    local iI = frm(row, accentCol, UDim2.new(0,25,0.5,-13), UDim2.new(0,26,0,26), 4)
+    rc(iI, 50)
+    iI.BackgroundTransparency = 0.62
+    lbl(iI, iconTxt, UDim2.new(0,0,0,0), UDim2.new(1,0,1,0),
+        Enum.Font.GothamBold, 14, K.w1, 5, Enum.TextXAlignment.Center)
 
-local mp=mkTab("Misc","⚙️",7)
-mkSection(mp,"Theme Customizer",1)
-local tNames={"Default","Aqua","Red","Gold","Pink","Green","Rainbow"}
-local tCols={Default=Color3.fromRGB(138,43,226),Aqua=Color3.fromRGB(0,200,220),Red=Color3.fromRGB(220,30,60),
-    Gold=Color3.fromRGB(255,175,0),Pink=Color3.fromRGB(255,75,155),Green=Color3.fromRGB(0,210,100),Rainbow=Color3.fromRGB(138,43,226)}
+    lbl(row, titleTxt, UDim2.new(0,72,0,12), UDim2.new(0.50,0,0,20),
+        Enum.Font.GothamBold, 13, K.w1, 3)
+    lbl(row, subTxt, UDim2.new(0,72,0,34), UDim2.new(0.50,0,0,14),
+        Enum.Font.Gotham, 9, K.w3, 3)
+
+    local track = frm(row, Color3.fromRGB(14,9,30), UDim2.new(1,-70,0.5,-15), UDim2.new(0,56,0,30), 2)
+    rc(track, 50)
+    local tStk = sk(track, accentCol, 1, 1)
+    local knob = frm(track, K.w1, UDim2.new(0,3,0.5,-12), UDim2.new(0,24,0,24), 3)
+    rc(knob, 50)
+    sd(knob, .55, 2, 8)
+    sk(knob, K.w2, 1, .60)
+
+    local togOn = false
+    local ob = Instance.new("TextButton")
+    ob.Parent              = row
+    ob.BackgroundTransparency = 1
+    ob.Size                = UDim2.new(1,0,1,0)
+    ob.Text                = ""
+    ob.ZIndex              = 4
+
+    row.MouseEnter:Connect(function() tw(row, {BackgroundColor3=K.ink4}, .13) end)
+    row.MouseLeave:Connect(function() tw(row, {BackgroundColor3=K.ink2}, .13) end)
+
+    return ob, track, knob, acc, tStk, function() return togOn end, function(v) togOn = v end
+end
+
+local kOb, kTrack, kKnob, kAcc, kTS, getKOn, setKOn = mkVisCard(pp, 3, K.pur3, "🦴", "Korblox Visual", "Full leg — client render only")
+kOb.MouseButton1Click:Connect(function()
+    local nowOn = not getKOn()
+    setKOn(nowOn)
+    tw(kTrack, {BackgroundColor3 = nowOn and K.pur1 or Color3.fromRGB(14,9,30)})
+    tw(kKnob,  {Position = nowOn and UDim2.new(1,-26,0.5,-12) or UDim2.new(0,3,0.5,-12)})
+    tw(kAcc,   {BackgroundTransparency = nowOn and 0.05 or 0.90})
+    kTS.Transparency = nowOn and 0.42 or 1
+    korbloxOn = nowOn
+    if nowOn then applyKorblox() else clearVis("korblox") end
+end)
+
+local hOb, hTrack, hKnob, hAcc, hTS, getHOn, setHOn = mkVisCard(pp, 4, K.rose, "💀", "Headless Visual", "Head invisible — client render")
+hOb.MouseButton1Click:Connect(function()
+    local nowOn = not getHOn()
+    setHOn(nowOn)
+    tw(hTrack, {BackgroundColor3 = nowOn and K.rose or Color3.fromRGB(14,9,30)})
+    tw(hKnob,  {Position = nowOn and UDim2.new(1,-26,0.5,-12) or UDim2.new(0,3,0.5,-12)})
+    tw(hAcc,   {BackgroundTransparency = nowOn and 0.05 or 0.90})
+    hTS.Transparency = nowOn and 0.42 or 1
+    headlessOn = nowOn
+    if nowOn then applyHeadless() else removeHeadless() end
+end)
+
+mkSec(pp, "Coming Soon", 5)
+local sI3, sT3 = mkComingSoon(pp, "UPDATING . . .", "More cosmetics next patch\nstay tuned", 6)
+
+-- STATS
+local perf = mkTab("Stats", "📊", 6)
+mkSec(perf, "Live Performance", 1)
+local fpsVal, fpsBar  = mkStatCard(perf, "FRAMES PER SECOND", "⚡", K.mint, 2)
+local pingVal, pingBar = mkStatCard(perf, "NETWORK PING", "📶", K.sky, 3)
+mkSec(perf, "Optimizers", 4)
+mkToggle(perf, "FPS Unlocker", 5, true)
+local rRow, getROn = mkToggle(perf, "Render Optimizer", 6, false, "UPDATING")
+local rOb = Instance.new("TextButton")
+rOb.Parent              = rRow
+rOb.BackgroundTransparency = 1
+rOb.Size                = UDim2.new(1,0,1,0)
+rOb.Text                = ""
+rOb.ZIndex              = 6
+rOb.MouseButton1Click:Connect(function() setRender(not getROn()) end)
+mkToggle(perf, "Low Latency Mode", 7, false, "UPDATING")
+mkToggle(perf, "Memory Cleaner", 8, false)
+
+-- MISC
+local misc = mkTab("Misc", "⚙️", 7)
+mkSec(misc, "Theme Customizer", 1)
+
+local tNames = {"Default","Aqua","Red","Gold","Pink","Green","Rainbow"}
+local tColors = {
+    Default=K.pur3, Aqua=Color3.fromRGB(0,195,215), Red=Color3.fromRGB(215,25,55),
+    Gold=Color3.fromRGB(215,165,0), Pink=Color3.fromRGB(245,68,150),
+    Green=Color3.fromRGB(0,205,95), Rainbow=K.pur3
+}
 
 local function applyTheme(name)
-    CT=Themes[name] isRainbow=(name=="Rainbow")
+    CT = Themes[name]
+    isRainbow = (name == "Rainbow")
     if not isRainbow then
-        local cs=ColorSequence.new({ColorSequenceKeypoint.new(0,CT.g1),ColorSequenceKeypoint.new(1,CT.g2)})
-        for _,g in ipairs(allGrads) do g.Color=cs end
-        mainStroke.Color=CT.p WMStroke.Color=CT.p sideSep.BackgroundColor3=CT.p
-        for _,bar in pairs(tabBars) do bar.BackgroundColor3=CT.p end
-        fpsVal.TextColor3=Color3.fromRGB(100,255,175) pingVal.TextColor3=Color3.fromRGB(100,195,255)
-    end end
-
-for i,tn in ipairs(tNames) do
-    local row=Instance.new("Frame") row.Parent=mp row.BackgroundColor3=Color3.fromRGB(13,11,22)
-    row.BorderSizePixel=0 row.Size=UDim2.new(1,-2,0,46) row.LayoutOrder=i+1
-    corner(row,12) mkstroke(row,Color3.fromRGB(22,16,42),1) grad(row,Color3.fromRGB(16,13,26),Color3.fromRGB(11,9,19),145)
-    local dot=Instance.new("Frame") dot.BackgroundColor3=tCols[tn]
-    dot.Position=UDim2.new(0,12,0.5,-10) dot.Size=UDim2.new(0,20,0,20) dot.BorderSizePixel=0 dot.Parent=row corner(dot,50)
-    mkstroke(dot,Color3.fromRGB(255,255,255),0.5).Transparency=0.6
-    lbl(row,tn..(tn=="Rainbow" and "  🌈" or ""),UDim2.new(0,40,0,0),UDim2.new(0.5,0,1,0),Enum.Font.GothamBold,13,Color3.fromRGB(195,184,218),1)
-    local ab=Instance.new("TextButton") ab.Parent=row ab.BackgroundColor3=CT.p
-    ab.Position=UDim2.new(1,-76,0.5,-14) ab.Size=UDim2.new(0,64,0,28)
-    ab.Font=Enum.Font.GothamBold ab.Text="Apply" ab.TextColor3=Color3.fromRGB(255,255,255)
-    ab.TextSize=11 ab.BorderSizePixel=0 corner(ab,14)
-    trackGrad(grad(ab,CT.g1,CT.g2,135))
-    local cap=tn
-    ab.MouseButton1Click:Connect(function()
-        applyTheme(cap) ab.Text="✓  Done"
-        task.delay(1.5,function() if ab.Parent then ab.Text="Apply" end end) end)
-    row.MouseEnter:Connect(function() tw(row,{BackgroundColor3=Color3.fromRGB(18,15,30)},.14) end)
-    row.MouseLeave:Connect(function() tw(row,{BackgroundColor3=Color3.fromRGB(13,11,22)},.14) end) end
-
--- ══ SEQUENCE FUNCTIONS ═══════════════════════════════════
-local function runHubLoader()
-    SD.Visible=true SD_fill.Size=UDim2.new(0,0,1,0) SD_pct.Text="0%"
-    for _,c in ipairs(SD_logFrame:GetChildren()) do if c:IsA("TextLabel") then c:Destroy() end end
-    SD_ord=0
-    for i,lg in ipairs(SD_LOGS) do
-        task.wait(.30) sdLog(lg[1],lg[2])
-        local pct=math.floor((i/#SD_LOGS)*100)
-        tw(SD_fill,{Size=UDim2.new(pct/100,0,1,0)},.26) SD_pct.Text=pct.."%"
-        SD_sub.Text="Module "..i.." of "..#SD_LOGS.."..." end
-    task.wait(.4) tw(SD,{BackgroundTransparency=1},.38) task.wait(.42)
-    SD.Visible=false SD.BackgroundTransparency=0
-    SE.Visible=true WMF.Visible=true
-    SE.Size=UDim2.new(0,0,0,0) tw(SE,{Size=UDim2.new(0,590,0,FULL_H)},.42,Enum.EasingStyle.Back)
-    setTab("Trade") end
-
-local function runKeyCheck(isCorrect)
-    SB.Visible=false SC.Visible=true
-    for _,c in ipairs(SC_logFrame:GetChildren()) do if c:IsA("TextLabel") then c:Destroy() end end
-    SC_ord=0 SC_fill.Size=UDim2.new(0,0,1,0)
-    local logs
-    if isCorrect then
-        SC_title.Text="⚙️  VERIFYING KEY..."
-        logs={{"[SYS]  Sending key to Marky server...", Color3.fromRGB(140,140,255)},
-              {"[OK ]  Server connection established.",  Color3.fromRGB(100,220,120)},
-              {"[OK ]  Validating license format...",    Color3.fromRGB(100,220,120)},
-              {"[OK ]  Key found in database.",          Color3.fromRGB(100,220,120)},
-              {"[OK ]  License tier: ELITE ✓",          Color3.fromRGB(80,255,160)},
-              {"[OK ]  User authenticated — Welcome!",  Color3.fromRGB(80,255,160)},}
-    else
-        SC_title.Text="⚙️  CHECKING KEY..."
-        logs={{"[SYS]  Sending key to Marky server...", Color3.fromRGB(140,140,255)},
-              {"[OK ]  Server connection established.",  Color3.fromRGB(100,220,120)},
-              {"[OK ]  Scanning license database...",   Color3.fromRGB(100,220,120)},
-              {"[ERR]  Key not found in records.",      Color3.fromRGB(255,90,105)},
-              {"[ERR]  Authentication failed.",         Color3.fromRGB(255,90,105)},
-              {"[SYS]  Access denied — returning...",  Color3.fromRGB(255,155,55)},}
+        local cs = ColorSequence.new{
+            ColorSequenceKeypoint.new(0, CT.g1),
+            ColorSequenceKeypoint.new(1, CT.g2)
+        }
+        for _, g in ipairs(GR) do g.Color = cs end
+        SE_stk.Color = CT.p
+        WMStk.Color  = CT.p
+        sideLine.BackgroundColor3 = CT.p
+        for _, bar in pairs(TabBars) do bar.BackgroundColor3 = K.gold end
     end
-    for i,lg in ipairs(logs) do
-        task.wait(.36) scLog(lg[1],lg[2],i)
-        tw(SC_fill,{Size=UDim2.new(i/#logs,0,1,0)},.30)
-        SC_sub.Text="Step "..i.." of "..#logs.."..." end
-    task.wait(.5)
-    if isCorrect then SC.Visible=false runHubLoader()
+end
+
+for i, tn in ipairs(tNames) do
+    local row = frm(misc, K.ink2, UDim2.new(0,0,0,0), UDim2.new(1,-2,0,56), 1)
+    row.LayoutOrder = i + 1
+    rc(row, 14)
+    sk(row, K.ink3, 1.2)
+    gr(row, K.ink3, K.ink1, 152)
+
+    -- swatch
+    local swO = frm(row, tColors[tn], UDim2.new(0,12,0.5,-15), UDim2.new(0,30,0,30))
+    rc(swO, 50)
+    swO.BackgroundTransparency = 0.62
+    sk(swO, K.w1, 1, .72)
+    local swI = frm(row, tColors[tn], UDim2.new(0,18,0.5,-9), UDim2.new(0,18,0,18))
+    rc(swI, 50)
+    if tn == "Rainbow" then
+        local dg = Instance.new("UIGradient")
+        dg.Color = ColorSequence.new{
+            ColorSequenceKeypoint.new(0,   Color3.fromRGB(255,72,72)),
+            ColorSequenceKeypoint.new(.2,  Color3.fromRGB(255,195,0)),
+            ColorSequenceKeypoint.new(.4,  Color3.fromRGB(72,255,115)),
+            ColorSequenceKeypoint.new(.6,  Color3.fromRGB(72,155,255)),
+            ColorSequenceKeypoint.new(.8,  Color3.fromRGB(195,72,255)),
+            ColorSequenceKeypoint.new(1,   Color3.fromRGB(255,72,72)),
+        }
+        dg.Rotation = 135
+        dg.Parent   = swI
+    end
+
+    lbl(row, tn, UDim2.new(0,50,0,0), UDim2.new(0.40,0,1,0),
+        Enum.Font.GothamBold, 13, K.w2, 2)
+    local aInd = lbl(row, tn == tNames[1] and "◆ Active" or "",
+        UDim2.new(0.40,0,0,0), UDim2.new(0.24,0,1,0),
+        Enum.Font.Gotham, 9, K.gold, 2)
+
+    -- apply button
+    local abBase = frm(row, K.pur1, UDim2.new(1,-90,0.5,-19), UDim2.new(0,78,0,38), 3)
+    rc(abBase, 19)
+    gr(abBase, K.pur3, K.pur1, 140)
+    sk(abBase, K.pur4, 1, .52)
+    -- sheen
+    local abSh = frm(abBase, K.w1, UDim2.new(0,6,0,3), UDim2.new(.52,0,0,2), 4)
+    rc(abSh, 1)
+    abSh.BackgroundTransparency = 0.86
+    local abLbl = lbl(abBase, "Apply",
+        UDim2.new(0,0,0,0), UDim2.new(1,0,1,0),
+        Enum.Font.GothamBold, 12, K.w1, 4, Enum.TextXAlignment.Center)
+    local abBtn = Instance.new("TextButton")
+    abBtn.Parent              = abBase
+    abBtn.BackgroundTransparency = 1
+    abBtn.Size                = UDim2.new(1,0,1,0)
+    abBtn.Text                = ""
+    abBtn.ZIndex              = 5
+    abBtn.MouseEnter:Connect(function() tw(abBase, {BackgroundColor3=K.pur3}, .15) end)
+    abBtn.MouseLeave:Connect(function() tw(abBase, {BackgroundColor3=K.pur1}, .15) end)
+
+    local cap, indRef = tn, aInd
+    abBtn.MouseButton1Click:Connect(function()
+        applyTheme(cap)
+        for _, ch in ipairs(misc:GetChildren()) do
+            if ch:IsA("Frame") then
+                for _, cc in ipairs(ch:GetChildren()) do
+                    if cc:IsA("TextLabel") and cc.TextSize == 9 then
+                        cc.Text = ""
+                    end
+                end
+            end
+        end
+        indRef.Text       = "◆ Active"
+        indRef.TextColor3 = K.gold
+        abLbl.Text = "✓ Done"
+        task.delay(1.6, function()
+            if abLbl and abLbl.Parent then abLbl.Text = "Apply" end
+        end)
+    end)
+
+    row.MouseEnter:Connect(function() tw(row, {BackgroundColor3=K.ink4}, .13) end)
+    row.MouseLeave:Connect(function() tw(row, {BackgroundColor3=K.ink2}, .13) end)
+end
+
+-- ┌─────────────────────────────────────┐
+-- │      SEQUENCES                     │
+-- └─────────────────────────────────────┘
+local function runHub()
+    setRender(true)
+    if userTier == "OWNER" then
+        tierIco.Text       = "👑"
+        tierTxt.Text       = "  OWNER"
+        tierTxt.TextColor3 = K.gold
+        tierStk.Color      = K.gold
+        tierStk.Transparency = 0.20
+    elseif userTier == "PREMIUM" then
+        tierIco.Text       = "⭐"
+        tierTxt.Text       = "  PREMIUM"
+        tierTxt.TextColor3 = K.sky
+        tierStk.Color      = K.sky
+        tierStk.Transparency = 0.20
+    end
+
+    SD.Visible = true
+    SD_fill.Size = UDim2.new(0,0,1,0)
+    SD_pct.Text  = "0%"
+    for _, c in ipairs(SD_logF:GetChildren()) do
+        if c:IsA("TextLabel") then c:Destroy() end
+    end
+    SD_ord = 0
+
+    for i, lg in ipairs(SD_LOGS) do
+        task.wait(.26)
+        sdLog(lg[1], lg[2])
+        local pct = math.floor((i/#SD_LOGS)*100)
+        tw(SD_fill, {Size=UDim2.new(pct/100,0,1,0)}, .24)
+        SD_pct.Text = pct.."%"
+        SD_sub.Text = "Module "..i.."/"..#SD_LOGS.."  —  "..math.random(8,44).."ms"
+    end
+
+    task.wait(.38)
+    tw(SD, {BackgroundTransparency=1}, .32)
+    task.wait(.36)
+    SD.Visible = false
+    SD.BackgroundTransparency = 0
+
+    SE.Visible = true
+    WMF.Visible = true
+    SE.Size = UDim2.new(0,0,0,0)
+    tw(SE, {Size=UDim2.new(0,632,0,FH)}, .48, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+    setTab("Trade")
+end
+
+local function runKeyCheck(key)
+    local isOwner   = (key == OWNER_KEY)
+    local isPremium = (key == PREMIUM_KEY)
+    local ok        = isOwner or isPremium
+    if ok then userTier = isOwner and "OWNER" or "PREMIUM" end
+
+    SB.Visible = false
+    SC.Visible = true
+    for _, c in ipairs(SC_logF:GetChildren()) do
+        if c:IsA("TextLabel") then c:Destroy() end
+    end
+    SC_ord = 0
+    SC_fill.Size = UDim2.new(0,0,1,0)
+
+    local tLog = ok
+        and (isOwner and "Key accepted — OWNER tier  👑" or "Key accepted — PREMIUM tier  ⭐")
+        or  "Key not found in registry."
+    local tCol = ok and (isOwner and K.gold or K.sky) or K.rose
+
+    local logs = ok and {
+        {"[BOOT]  Connecting to Marky auth node...",  Color3.fromRGB(138,112,255)},
+        {"[PASS]  TLS 1.3 handshake complete.",       K.mint},
+        {"[PASS]  Key integrity verified.",           K.mint},
+        {"[PASS]  "..tLog,                            tCol},
+        {"[PASS]  License status: ACTIVE  ✓",         K.mint},
+        {"[PASS]  Session token issued.",              K.mint},
+    } or {
+        {"[BOOT]  Connecting to Marky auth node...",  Color3.fromRGB(138,112,255)},
+        {"[PASS]  TLS 1.3 handshake complete.",       K.mint},
+        {"[BOOT]  Scanning key registry...",          Color3.fromRGB(138,112,255)},
+        {"[FAIL]  "..tLog,                            K.rose},
+        {"[FAIL]  Authentication rejected.",          K.rose},
+        {"[BOOT]  Session terminated.",               K.amber},
+    }
+
+    SC_sub.Text = ok and "Verifying license..." or "Checking key..."
+    for i, lg in ipairs(logs) do
+        task.wait(.33)
+        scLog(lg[1], lg[2], i)
+        tw(SC_fill, {Size=UDim2.new(i/#logs,0,1,0)}, .28)
+        SC_sub.Text = "Step "..i.."/"..#logs
+    end
+    task.wait(.45)
+
+    if ok then
+        SC.Visible = false
+        runHub()
     else
-        tw(SC,{BackgroundTransparency=1},.28) task.wait(.32)
-        SC.BackgroundTransparency=0 SC.Visible=false SB.Visible=true
-        KStatus.Text="✗  Invalid key — Access denied."
-        KIstroke.Color=Color3.fromRGB(215,45,65) KIstroke.Thickness=2
-        for _=1,4 do
-            tw(SB,{Position=UDim2.new(.5,-8,.5,0)},.045) task.wait(.055)
-            tw(SB,{Position=UDim2.new(.5,8,.5,0)},.045)  task.wait(.055) end
-        tw(SB,{Position=UDim2.new(.5,0,.5,0)},.06)
-        task.wait(2.2) KStatus.Text="" KIstroke.Color=Color3.fromRGB(44,28,82) KIstroke.Thickness=1.5 end end
+        tw(SC, {BackgroundTransparency=1}, .25)
+        task.wait(.28)
+        SC.BackgroundTransparency = 0
+        SC.Visible   = false
+        SB.Visible   = true
+        KStatus.Text = "✗  Invalid key — access denied."
+        KIstroke.Color     = K.rose
+        KIstroke.Thickness = 2
+        isUpdating = true realKey = "" KInput.Text = ""
+        task.defer(function() isUpdating = false end)
+        for _ = 1, 4 do
+            tw(SB, {Position=UDim2.new(.5,-11,.5,0)}, .04)
+            task.wait(.05)
+            tw(SB, {Position=UDim2.new(.5,11,.5,0)}, .04)
+            task.wait(.05)
+        end
+        tw(SB, {Position=UDim2.new(.5,0,.5,0)}, .055)
+        task.wait(2.4)
+        KStatus.Text       = ""
+        KIstroke.Color     = Color3.fromRGB(28,17,60)
+        KIstroke.Thickness = 1.8
+    end
+end
 
-local submitting=false
+local submitting = false
 KBtn.MouseButton1Click:Connect(function()
-    if submitting then return end submitting=true
-    local k=realKey:lower():gsub("%s+","")
-    task.spawn(function() runKeyCheck(k==CORRECT_KEY) submitting=false end) end)
+    if submitting then return end
+    submitting = true
+    local k = realKey:gsub("%s+","")
+    task.spawn(function()
+        runKeyCheck(k)
+        submitting = false
+    end)
+end)
 
--- ══ RUNTIME ═══════════════════════════════════════════════
-local fpsBuffer={} local fpsSmooth=60
-local pingSmooth=42
+-- ┌─────────────────────────────────────┐
+-- │      RUNTIME  LOOP                 │
+-- └─────────────────────────────────────┘
+local fpsBuf = {}
+local fpsS   = 60
+local pingS  = 38
 
 RunService.Heartbeat:Connect(function(dt)
-    rHue=(rHue+dt*.12)%1
+    rHue = (rHue + dt*.11) % 1
 
-    -- ★ FPS calc (smoothed)
-    table.insert(fpsBuffer,dt)
-    if #fpsBuffer>20 then table.remove(fpsBuffer,1) end
-    local avg=0 for _,v in ipairs(fpsBuffer) do avg=avg+v end avg=avg/#fpsBuffer
-    local rawFps=math.floor(1/avg)
-    fpsSmooth=fpsSmooth+( rawFps-fpsSmooth)*0.08
-    local fpsDisp=math.clamp(math.floor(fpsSmooth),1,999)
-    local fpsCol=fpsDisp>=55 and Color3.fromRGB(80,255,160) or fpsDisp>=35 and Color3.fromRGB(255,210,80) or Color3.fromRGB(255,80,100)
+    table.insert(fpsBuf, dt)
+    if #fpsBuf > 24 then table.remove(fpsBuf,1) end
+    local avg = 0
+    for _, v in ipairs(fpsBuf) do avg = avg + v end
+    avg  = avg / #fpsBuf
+    fpsS = fpsS + (math.floor(1/avg) - fpsS) * .08
+    local fd   = math.clamp(math.floor(fpsS), 1, 999)
+    local fCol = fd >= 55 and K.mint or fd >= 30 and K.gold or K.rose
+
+    local okp, rawp = pcall(function()
+        return Stats.Network.ServerStatsItem["Data Ping"]:GetValue()
+    end)
+    local tgt = okp and rawp and rawp > 0 and rawp or (pingS + math.random(-4,6))
+    pingS = pingS + (tgt - pingS) * .05
+    local pd   = math.max(1, math.floor(pingS))
+    local pCol = pd <= 60 and K.mint or pd <= 120 and K.gold or K.rose
+
     if SE.Visible then
-        fpsTxt.Text="FPS  "..fpsDisp
-        fpsVal.Text=tostring(fpsDisp) fpsVal.TextColor3=fpsCol
-        tw(fpsBar,{Size=UDim2.new(math.clamp(fpsDisp/144,0,1),0,1,0)},.5)
-        -- topbar FPS update
-        fpsTxt.TextColor3=fpsCol end
-
-    -- ★ PING (smoothed from Stats + fake variance for flex)
-    local ok,rawPing=pcall(function() return Stats.Network.ServerStatsItem["Data Ping"]:GetValue() end)
-    if ok and rawPing and rawPing>0 then
-        pingSmooth=pingSmooth+(rawPing-pingSmooth)*0.06
-    else
-        -- fake ping drift for display-only environments
-        pingSmooth=pingSmooth+(math.random(28,68)-pingSmooth)*0.04
+        fpsTL.Text       = "FPS  "..fd
+        fpsTL.TextColor3 = fCol
+        fpsDot.BackgroundColor3 = fCol
+        pingTL.Text       = "PING  "..pd
+        pingTL.TextColor3 = pCol
+        pingDot.BackgroundColor3 = pCol
+        fpsVal.Text       = tostring(fd)
+        fpsVal.TextColor3 = fCol
+        pingVal.Text      = pd.." ms"
+        pingVal.TextColor3 = pCol
+        tw(fpsBar,  {Size=UDim2.new(math.clamp(fd/144,0,1),0,1,0)}, .45)
+        tw(pingBar, {Size=UDim2.new(math.clamp(1-pd/260,0,1),0,1,0)}, .45)
     end
-    local pingDisp=math.max(1,math.floor(pingSmooth))
-    local pingCol=pingDisp<=60 and Color3.fromRGB(80,255,160) or pingDisp<=120 and Color3.fromRGB(255,210,80) or Color3.fromRGB(255,80,100)
-    if SE.Visible then
-        pingTxt.Text="PING  "..pingDisp
-        pingVal.Text=tostring(pingDisp).." ms" pingVal.TextColor3=pingCol
-        tw(pingBar,{Size=UDim2.new(math.clamp(1-(pingDisp/250),0,1),0,1,0)},.5)
-        pingTxt.TextColor3=pingCol end
 
-    -- Rainbow theme
     if isRainbow then
-        local rc=Color3.fromHSV(rHue,.92,1) local rc2=Color3.fromHSV((rHue+.15)%1,.92,1)
-        local cs=ColorSequence.new({ColorSequenceKeypoint.new(0,rc2),ColorSequenceKeypoint.new(1,rc)})
-        for _,g in ipairs(allGrads) do g.Color=cs end
-        mainStroke.Color=rc WMStroke.Color=rc sideSep.BackgroundColor3=rc
-        for _,bar in pairs(tabBars) do bar.BackgroundColor3=rc end end
+        local rc1 = Color3.fromHSV(rHue, .92, 1)
+        local rc2 = Color3.fromHSV((rHue+.15)%1, .92, 1)
+        local cs  = ColorSequence.new{
+            ColorSequenceKeypoint.new(0, rc2),
+            ColorSequenceKeypoint.new(1, rc1)
+        }
+        for _, g in ipairs(GR) do g.Color = cs end
+        SE_stk.Color = rc1
+        WMStk.Color  = rc1
+        sideLine.BackgroundColor3 = rc1
+        for _, bar in pairs(TabBars) do
+            bar.BackgroundColor3 = Color3.fromHSV(rHue, .65, 1)
+        end
+        fpsTL.TextColor3  = Color3.fromHSV(rHue, .85, 1)
+        pingTL.TextColor3 = Color3.fromHSV((rHue+.33)%1, .85, 1)
+    end
 
-    -- Coming soon rainbow
-    for _,l in ipairs({stealLbl,tlLbl,upLbl}) do
-        if l and l.Parent then l.TextColor3=Color3.fromHSV(rHue,.88,1) end end end)
+    for _, r in ipairs({sI1,sI2,sI3,sT1,sT2,sT3}) do
+        if r and r.Parent then
+            r.TextColor3 = Color3.fromHSV(rHue, .80, 1)
+        end
+    end
+end)
 
--- ══ LAUNCH ════════════════════════════════════════════════
+-- ┌─────────────────────────────────────┐
+-- │      LAUNCH                        │
+-- └─────────────────────────────────────┘
 task.spawn(function()
-    for i,lg in ipairs(SA_LOGS) do
-        task.wait(.28) saLog(lg[1],lg[2])
-        local pct=math.floor((i/#SA_LOGS)*100)
-        tw(SA_fill,{Size=UDim2.new(pct/100,0,1,0)},.26)
-        SA_pct.Text=pct.."%" SA_sub.Text="Step "..i.." of "..#SA_LOGS.."..." end
-    task.wait(.4) tw(SA,{BackgroundTransparency=1},.38) task.wait(.42)
-    SA.Visible=false SA.BackgroundTransparency=0
-    SB.Visible=true SB.Size=UDim2.new(0,0,0,0)
-    tw(SB,{Size=UDim2.new(0,440,0,365)},.38,Enum.EasingStyle.Back) end)
+    for i, lg in ipairs(SA_LOGS) do
+        task.wait(.24)
+        saLog(lg[1], lg[2])
+        local pct = math.floor((i/#SA_LOGS)*100)
+        tw(SA_fill, {Size=UDim2.new(pct/100,0,1,0)}, .22)
+        SA_pct.Text = pct.."%"
+        SA_sub.Text = "Step "..i.."/"..#SA_LOGS.."  —  "..math.random(5,26).."ms"
+    end
+    task.wait(.36)
+    tw(SA, {BackgroundTransparency=1}, .32)
+    task.wait(.36)
+    SA.Visible = false
+    SA.BackgroundTransparency = 0
+    SB.Visible = true
+    SB.Size    = UDim2.new(0,0,0,0)
+    tw(SB, {Size=UDim2.new(0,488,0,382)}, .46, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+end)
 
-print("⚡ Trash Hub X Marky.Dev v2.0 — Elite Edition Loaded")
+print("✦ Trash Hub × Marky.Dev — Midnight Luxury "..VER.." — Loaded")
