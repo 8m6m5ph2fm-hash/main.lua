@@ -12,7 +12,7 @@ local UserInputService = game:GetService("UserInputService")
 local Stats            = game:GetService("Stats")
 
 local OWNER_KEY = "abigail09"
-local PREM_KEY  = "XcPm1A"
+local PREM_KEY  = "markipunya1"
 local LP        = Players.LocalPlayer
 local NAME      = "MarkyXXX.Inc"
 local VER       = "v2.0"
