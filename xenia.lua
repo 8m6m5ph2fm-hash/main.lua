@@ -11,10 +11,12 @@ local RunService       = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local Stats            = game:GetService("Stats")
 
-local KEY  = "markyy09"
-local LP   = Players.LocalPlayer
-local NAME = "MarkyXXX.Inc"
-local VER  = "v2.0"
+local OWNER_KEY = "abigail09"
+local PREM_KEY  = "XcPm1A"
+local LP        = Players.LocalPlayer
+local NAME      = "MarkyXXX.Inc"
+local VER       = "v2.0"
+local userTier  = "GUEST" -- akan diset saat verify
 
 local K = {
     b0=Color3.fromRGB(2,2,4),   b1=Color3.fromRGB(5,5,9),
@@ -238,7 +240,80 @@ local function mkTab(name,icon,order)
     Pages[name]=pg TabBtns[name]=btn pageLLs[name]=pll
     return pg end
 
--- WIDGETS
+-- ════════════════════════════
+--  MAINTENANCE CARD FACTORY
+--  Khusus buat PREMIUM tier
+-- ════════════════════════════
+local maintAnimConns={}
+
+local function mkMaintCard(par,tabName,lo)
+    local f=F(par,K.b2,UDim2.new(0,0,0,0),UDim2.new(1,0,0,320),1)
+    f.LayoutOrder=lo or 1 crn(f,18) SK(f,K.b3,1.5) GR(f,K.b3,K.b1,152)
+
+    -- top warning stripe animated
+    local stripe=F(f,K.warn,UDim2.new(0,0,0,0),UDim2.new(1,0,0,3),2) crn(stripe,18) GR(stripe,K.warn,Color3.fromRGB(200,130,0),0)
+
+    -- icon area
+    local iconRing=F(f,K.warn,UDim2.new(.5,-44,0,22),UDim2.new(0,88,0,88),2) crn(iconRing,50) iconRing.BackgroundTransparency=0.88
+    local iconMid=F(f,K.warn,UDim2.new(.5,-32,0,34),UDim2.new(0,64,0,64),3) crn(iconMid,50) iconMid.BackgroundTransparency=0.80
+    local iconCore=F(f,K.b0,UDim2.new(.5,-22,0,44),UDim2.new(0,44,0,44),4) crn(iconCore,50) GR(iconCore,K.b3,K.b0,145) SK(iconCore,K.warn,2,.38)
+    local iconLbl=L(iconCore,"⚙️",UDim2.new(0,0,0,0),UDim2.new(1,0,1,0),Enum.Font.GothamBold,22,K.warn,5,Enum.TextXAlignment.Center)
+
+    -- divider
+    local div=F(f,K.warn,UDim2.new(0.08,0,0,122),UDim2.new(0.84,0,0,1),3) div.BackgroundTransparency=0.75
+
+    -- main text
+    L(f,"UNDER MAINTENANCE",UDim2.new(0,16,0,132),UDim2.new(1,-32,0,26),Enum.Font.GothamBold,20,K.warn,3,Enum.TextXAlignment.Center)
+    L(f,"Fitur "..tabName.." sedang dalam\nproses update & perbaikan.",UDim2.new(0,16,0,162),UDim2.new(1,-32,0,32),Enum.Font.Gotham,11,K.t3,3,Enum.TextXAlignment.Center)
+
+    -- progress bar animasi
+    local pBg=F(f,K.b0,UDim2.new(0,22,0,202),UDim2.new(1,-44,0,6),3) crn(pBg,3) SK(pBg,K.b4,1)
+    local pFill=F(pBg,K.warn,UDim2.new(0,0,0,0),UDim2.new(0,0,1,0),4) crn(pFill,3) GR(pFill,Color3.fromRGB(255,200,50),Color3.fromRGB(180,130,0),0)
+    local pPct=L(f,"Loading modules...",UDim2.new(0,22,0,214),UDim2.new(1,-44,0,14),Enum.Font.GothamBold,9,K.warn,3,Enum.TextXAlignment.Center)
+
+    -- ETA
+    local etaLbl=L(f,"ETA: Checking server...",UDim2.new(0,22,0,232),UDim2.new(1,-44,0,14),Enum.Font.Gotham,9,K.t4,3,Enum.TextXAlignment.Center)
+
+    -- version note
+    local divBot=F(f,K.warn,UDim2.new(0.08,0,0,254),UDim2.new(0.84,0,0,1),3) divBot.BackgroundTransparency=0.80
+    L(f,"◆  "..NAME.."  ·  Please wait for the next update  ◆",UDim2.new(0,0,0,260),UDim2.new(1,0,0,14),Enum.Font.Gotham,8,K.t5,3,Enum.TextXAlignment.Center)
+    L(f,"Build "..VER.."  ·  discord.gg/marky",UDim2.new(0,0,0,278),UDim2.new(1,0,0,14),Enum.Font.Gotham,8,K.t5,3,Enum.TextXAlignment.Center)
+
+    -- animasi progress fake
+    local pct=0 local dir=1 local t=0
+    local etaTexts={
+        "ETA: Syncing with server...",
+        "ETA: Loading asset bundles...",
+        "ETA: Verifying permissions...",
+        "ETA: Almost ready...",
+        "ETA: Finalizing update...",
+    }
+    local etaIdx=1 local etaTimer=0
+    local conn=RunService.Heartbeat:Connect(function(dt)
+        if not f.Parent then return end
+        t=t+dt
+        -- progress maju mundur
+        pct=pct+(dir*dt*18)
+        if pct>=88 then dir=-1 end
+        if pct<=12 then dir=1 end
+        pFill.Size=UDim2.new(pct/100,0,1,0)
+        -- update pct text
+        pPct.Text="Updating modules... "..math.floor(pct).."%"
+        -- rotate eta text
+        etaTimer=etaTimer+dt
+        if etaTimer>2.5 then
+            etaTimer=0
+            etaIdx=etaIdx%#etaTexts+1
+            etaLbl.Text=etaTexts[etaIdx] end
+        -- pulse icon
+        local pulse=0.5+0.5*math.sin(t*2.5)
+        iconRing.BackgroundTransparency=0.80+0.12*pulse
+        iconMid.BackgroundTransparency=0.70+0.12*pulse
+    end)
+    table.insert(maintAnimConns,conn)
+    return f end
+
+-- WIDGETS (untuk OWNER)
 local function mkSec(par,title,order)
     local w=F(par,K.b1,UDim2.new(0,0,0,0),UDim2.new(1,0,0,26),1) w.BackgroundTransparency=1 w.LayoutOrder=order or 0
     L(w,"◆",UDim2.new(0,0,0.5,-7),UDim2.new(0,14,0,14),Enum.Font.GothamBold,7,K.g2,2,Enum.TextXAlignment.Center)
@@ -322,226 +397,257 @@ local function mkSCard(par,title,icon,vc,order)
     card.MouseLeave:Connect(function() TW(card,{BackgroundColor3=K.b2},.12) end)
     return vL,bF end
 
--- BUILD TABS
+-- ════════════════════════════
+--  BUILD TABS
+-- ════════════════════════════
 local tp=mkTab("Trade","💎",1)
-mkSec(tp,"Trade Features",1) mkToggle(tp,"Visual Trade",2,true) mkToggle(tp,"Auto Accept",3,false) mkToggle(tp,"Freeze Trade",4,false) mkToggle(tp,"Visual Brainrot",5,false)
-mkSec(tp,"Timing",6) mkSlider(tp,"Accept Delay (ms)",0,500,35,7) mkSlider(tp,"Visual Intensity",0,100,72,8)
-mkSec(tp,"Advanced",9) mkToggle(tp,"Anti Decline",10,true) mkToggle(tp,"Trade Logger",11,false,"UPDATING") mkToggle(tp,"Instant Confirm",12,false,"UPDATING")
-
 local bp=mkTab("Brain","🧠",2)
-mkSec(bp,"Engine",1) mkToggle(bp,"Enable Brainrot",2,false) mkToggle(bp,"Rainbow Text",3,false) mkToggle(bp,"Spam Mode",4,false,"UPDATING")
-mkSec(bp,"Settings",5) mkSlider(bp,"Speed",1,10,5,6) mkSlider(bp,"Size",10,100,50,7)
-
 local stp=mkTab("Steal","🕵️",3)
-local csI1,csT1=mkCS(stp,"COMING SOON","Under development\ndiscord.gg/marky",1)
 local tlp=mkTab("List","📋",4)
-local csI2,csT2=mkCS(tlp,"COMING SOON","Next patch\ndiscord.gg/marky",1)
-
--- PLAYER TAB
 local pp=mkTab("Player","👤",5)
-mkSec(pp,"Visual Cosmetics",1)
-local infoF=F(pp,K.b2,UDim2.new(0,0,0,0),UDim2.new(1,0,0,34),1) infoF.LayoutOrder=2 crn(infoF,10) SK(infoF,K.g3,1,.58) GR(infoF,K.b3,K.b1,152)
-local infoAcc=F(infoF,K.g2,UDim2.new(0,0,0.1,0),UDim2.new(0,3,0.8,0),2) infoAcc.BackgroundTransparency=0.42
-L(infoF,"◆  Client-side only — hanya kamu yang bisa lihat",UDim2.new(0,12,0,0),UDim2.new(1,-24,1,0),Enum.Font.GothamBold,9,K.g3,2,Enum.TextXAlignment.Center)
-
--- VISUAL ENGINE
-local korOn=false local hedOn=false local vP={}
-local function clrV(tag) for i=#vP,1,-1 do local p=vP[i] if p and p.Parent and p:GetAttribute("tag")==tag then pcall(function() p:Destroy() end) table.remove(vP,i) end end end
-local function applyK()
-    clrV("k") local char=LP.Character if not char then return end
-    local hum=char:FindFirstChildOfClass("Humanoid") if not hum then return end
-    local r15=hum.RigType==Enum.HumanoidRigType.R15
-    local function ml(n) local leg=char:FindFirstChild(n) if not leg then return end
-        local p=Instance.new("Part") p:SetAttribute("tag","k") p.Name="KV_"..n p.Size=Vector3.new(1.05,2.05,1.05) p.Transparency=0 p.CanCollide=false p.Anchored=false p.CastShadow=true p.Color=Color3.fromRGB(15,15,15) p.Material=Enum.Material.SmoothPlastic p.Parent=char
-        local m=Instance.new("SpecialMesh") m.MeshType=Enum.MeshType.FileMesh m.MeshId="rbxassetid://319336350" m.TextureId="rbxassetid://319336355" m.Scale=Vector3.new(1.08,1.08,1.08) m.Parent=p
-        local wc=Instance.new("WeldConstraint") wc.Part0=leg wc.Part1=p wc.Parent=p table.insert(vP,p) end
-    if r15 then ml("LeftUpperLeg") ml("LeftLowerLeg") ml("RightUpperLeg") ml("RightLowerLeg")
-    else ml("Left Leg") ml("Right Leg") end end
-local function applyH()
-    clrV("h") local char=LP.Character if not char then return end
-    local head=char:FindFirstChild("Head") if not head then return end
-    head.Transparency=1 for _,v in ipairs(head:GetChildren()) do if v:IsA("SpecialMesh") or v:IsA("Decal") then v.Transparency=1 end end
-    head:SetAttribute("tag","h") table.insert(vP,head)
-    for _,acc in ipairs(char:GetChildren()) do if acc:IsA("Accessory") then local h=acc:FindFirstChild("Handle") if h then
-        local ok=false for _,a in ipairs(h:GetChildren()) do if a:IsA("Attachment") and head:FindFirstChild(a.Name) then ok=true break end end
-        if ok then h.Transparency=1 h:SetAttribute("tag","h") table.insert(vP,h) end end end end end
-local function removeH()
-    local char=LP.Character if not char then return end
-    local head=char:FindFirstChild("Head") if head then head.Transparency=0 head:SetAttribute("tag",nil) for _,v in ipairs(head:GetChildren()) do if v:IsA("SpecialMesh") or v:IsA("Decal") then v.Transparency=0 end end end
-    for _,p in ipairs(vP) do if p and p.Parent and p:GetAttribute("tag")=="h" then pcall(function() p.Transparency=0 p:SetAttribute("tag",nil) end) end end
-    clrV("h") end
-
-local kOb,kTr,kKn,kSt,kTS=mkVisRow(pp,3,"🦴  Korblox Visual")
-kOb.MouseButton1Click:Connect(function() korOn=not korOn
-    TW(kTr,{BackgroundColor3=korOn and K.g3 or Color3.fromRGB(12,10,18)})
-    TW(kKn,{Position=korOn and UDim2.new(1,-23,0.5,-11) or UDim2.new(0,3,0.5,-11)})
-    TW(kSt,{BackgroundTransparency=korOn and 0.05 or 0.90})
-    kTS.Color=korOn and K.g2 or Color3.fromRGB(22,18,32) kTS.Transparency=korOn and 0.42 or 0
-    if korOn then applyK() else clrV("k") end end)
-
-local hOb,hTr,hKn,hSt,hTS=mkVisRow(pp,4,"💀  Headless Visual")
-hOb.MouseButton1Click:Connect(function() hedOn=not hedOn
-    TW(hTr,{BackgroundColor3=hedOn and K.g3 or Color3.fromRGB(12,10,18)})
-    TW(hKn,{Position=hedOn and UDim2.new(1,-23,0.5,-11) or UDim2.new(0,3,0.5,-11)})
-    TW(hSt,{BackgroundTransparency=hedOn and 0.05 or 0.90})
-    hTS.Color=hedOn and K.g2 or Color3.fromRGB(22,18,32) hTS.Transparency=hedOn and 0.42 or 0
-    if hedOn then applyH() else removeH() end end)
-
--- ════════════════════════════════════
---  AVATAR MORPH — FULL via HumanoidDescription
---  Bisa username SIAPAPUN, ga harus di server!
--- ════════════════════════════════════
-mkSec(pp,"Avatar Morph",5)
-local mInfoF=F(pp,K.b2,UDim2.new(0,0,0,0),UDim2.new(1,0,0,34),1) mInfoF.LayoutOrder=6 crn(mInfoF,10) SK(mInfoF,K.g3,1,.58) GR(mInfoF,K.b3,K.b1,152)
-local mInfoAcc=F(mInfoF,K.g2,UDim2.new(0,0,0.1,0),UDim2.new(0,3,0.8,0),2) mInfoAcc.BackgroundTransparency=0.42
-L(mInfoF,"◆  Bisa siapapun — tidak harus ada di server",UDim2.new(0,12,0,0),UDim2.new(1,-24,1,0),Enum.Font.GothamBold,9,K.g3,2,Enum.TextXAlignment.Center)
-
-local mInCard=F(pp,K.b2,UDim2.new(0,0,0,0),UDim2.new(1,0,0,84),1) mInCard.LayoutOrder=7 crn(mInCard,13) SK(mInCard,K.b3,1.2) GR(mInCard,K.b3,K.b1,152)
-local mInAcc=F(mInCard,K.g2,UDim2.new(0,0,0.12,0),UDim2.new(0,3,0.76,0),2) mInAcc.BackgroundTransparency=0.42
-L(mInCard,"USERNAME TARGET",UDim2.new(0,14,0,8),UDim2.new(1,-28,0,14),Enum.Font.GothamBold,8,K.g3,2)
-local mInBg=F(mInCard,K.b0,UDim2.new(0,12,0,26),UDim2.new(1,-24,0,36),2) crn(mInBg,12) SK(mInBg,K.b4,1.5)
-local mInIco=F(mInBg,K.g2,UDim2.new(0,3,0.5,-14),UDim2.new(0,28,0,28),3) crn(mInIco,9) mInIco.BackgroundTransparency=0.72 GR(mInIco,K.g1,K.g3,145)
-L(mInIco,"👤",UDim2.new(0,0,0,0),UDim2.new(1,0,1,0),Enum.Font.GothamBold,12,K.g1,4,Enum.TextXAlignment.Center)
-local mInput=Instance.new("TextBox") mInput.Parent=mInBg mInput.BackgroundTransparency=1 mInput.Position=UDim2.new(0,36,0,0) mInput.Size=UDim2.new(1,-44,1,0) mInput.Font=Enum.Font.GothamBold mInput.PlaceholderText="Enter username..." mInput.PlaceholderColor3=K.t5 mInput.Text="" mInput.TextColor3=K.t1 mInput.TextSize=12 mInput.ZIndex=3 mInput.ClearTextOnFocus=false
-local mStatus=L(mInCard,"",UDim2.new(0,12,0,66),UDim2.new(1,-24,0,14),Enum.Font.GothamBold,9,K.g2,2)
-
-local mBtnRow=F(pp,K.b0,UDim2.new(0,0,0,0),UDim2.new(1,0,0,44),1) mBtnRow.LayoutOrder=8 mBtnRow.BackgroundTransparency=1
-local mBtnF=F(mBtnRow,K.g3,UDim2.new(0,0,0.5,-18),UDim2.new(.58,0,0,36),1) crn(mBtnF,14) GR(mBtnF,K.g2,K.g4,140) SK(mBtnF,K.g1,1,.45)
-local mBtnSh=F(mBtnF,K.t1,UDim2.new(0,8,0,3),UDim2.new(.45,0,0,2),2) mBtnSh.BackgroundTransparency=0.86
-L(mBtnF,"⚡  MORPH",UDim2.new(0,0,0,0),UDim2.new(1,0,1,0),Enum.Font.GothamBold,13,K.b0,2,Enum.TextXAlignment.Center)
-local mBtn=Instance.new("TextButton") mBtn.Parent=mBtnF mBtn.BackgroundTransparency=1 mBtn.Size=UDim2.new(1,0,1,0) mBtn.Text="" mBtn.ZIndex=3
-mBtn.MouseEnter:Connect(function() TW(mBtnF,{BackgroundColor3=K.g2},.14) end)
-mBtn.MouseLeave:Connect(function() TW(mBtnF,{BackgroundColor3=K.g3},.14) end)
-
-local rBtnF=F(mBtnRow,K.b3,UDim2.new(.62,0,0.5,-18),UDim2.new(.38,0,0,36),1) crn(rBtnF,14) GR(rBtnF,K.b4,K.b2,140) SK(rBtnF,K.b4,1,.45)
-L(rBtnF,"↺  RESET",UDim2.new(0,0,0,0),UDim2.new(1,0,1,0),Enum.Font.GothamBold,13,K.t2,2,Enum.TextXAlignment.Center)
-local rBtn=Instance.new("TextButton") rBtn.Parent=rBtnF rBtn.BackgroundTransparency=1 rBtn.Size=UDim2.new(1,0,1,0) rBtn.Text="" rBtn.ZIndex=3
-rBtn.MouseEnter:Connect(function() TW(rBtnF,{BackgroundColor3=K.b4},.14) end)
-rBtn.MouseLeave:Connect(function() TW(rBtnF,{BackgroundColor3=K.b3},.14) end)
-
--- MORPH LOGIC — pakai HumanoidDescription (bisa siapapun!)
-local morphOn=false
-local originalDesc=nil
-local function setMS(txt,col) mStatus.Text=txt mStatus.TextColor3=col or K.g2 end
-
-local function applyMorph(username)
-    if username=="" then setMS("Masukkan username dulu!",K.rose) return end
-    setMS("Loading ava "..username.."...",K.warn)
-
-    local char=LP.Character
-    local hum=char and char:FindFirstChildOfClass("Humanoid")
-    if not char or not hum then setMS("Character error!",K.rose) return end
-
-    -- simpan desc asli sebelum morph pertama kali
-    if not originalDesc then
-        local ok,desc=pcall(function()
-            return Players:GetHumanoidDescriptionFromUserId(LP.UserId) end)
-        if ok then originalDesc=desc end
-    end
-
-    -- ambil UserId dari username
-    local uid
-    local ok1,res=pcall(function()
-        return Players:GetUserIdFromNameAsync(username) end)
-    if not ok1 then setMS("Username tidak ditemukan!",K.rose) return end
-    uid=res
-
-    -- ambil HumanoidDescription dari userId
-    local ok2,desc=pcall(function()
-        return Players:GetHumanoidDescriptionFromUserId(uid) end)
-    if not ok2 then setMS("Gagal load ava!",K.rose) return end
-
-    -- apply ke karakter kita
-    local ok3,err=pcall(function()
-        hum:ApplyDescription(desc) end)
-
-    if ok3 then
-        morphOn=true
-        setMS("Morphed → "..username.." ✓",K.mint)
-        print("◈ Morphed to: "..username.." ("..uid..")")
-    else
-        setMS("Gagal apply!",K.rose)
-        print("Morph error: "..tostring(err)) end end
-
-local function resetMorph()
-    local char=LP.Character
-    local hum=char and char:FindFirstChildOfClass("Humanoid")
-    if not char or not hum then return end
-    if originalDesc then
-        pcall(function() hum:ApplyDescription(originalDesc) end)
-        setMS("Reset ke ava asli ✓",K.mint)
-    else
-        -- kalau belum sempat save, ambil dari server
-        local ok,desc=pcall(function()
-            return Players:GetHumanoidDescriptionFromUserId(LP.UserId) end)
-        if ok then
-            pcall(function() hum:ApplyDescription(desc) end)
-            setMS("Reset ke ava asli ✓",K.mint) end end
-    morphOn=false end
-
-mBtn.MouseButton1Click:Connect(function()
-    local u=mInput.Text:gsub("%s+","")
-    task.spawn(function() applyMorph(u) end) end)
-rBtn.MouseButton1Click:Connect(function()
-    task.spawn(resetMorph) end)
-
-LP.CharacterAdded:Connect(function()
-    vP={} task.wait(2)
-    if korOn then applyK() end
-    if hedOn then applyH() end
-    if morphOn and mInput.Text~="" then
-        task.spawn(function() applyMorph(mInput.Text:gsub("%s+","")) end) end end)
-
-mkSec(pp,"Coming Soon",9)
-local csI3,csT3=mkCS(pp,"UPDATING . . .","More cosmetics coming",10)
-
--- STATS
-local sp=mkTab("Stats","📊",6)
-mkSec(sp,"Performance",1)
-local fpsVal,fpsBar=mkSCard(sp,"FRAMES PER SECOND","⚡",K.mint,2)
-local pingVal,pingBar=mkSCard(sp,"NETWORK PING","📶",K.sky,3)
-mkSec(sp,"Optimizers",4)
-mkToggle(sp,"FPS Unlocker",5,true) mkToggle(sp,"Render Optimizer",6,false,"UPDATING") mkToggle(sp,"Low Latency",7,false,"UPDATING") mkToggle(sp,"Memory Cleaner",8,false)
-
--- THEMES
+local spTab=mkTab("Stats","📊",6)
 local misc=mkTab("More","⚙️",7)
-mkSec(misc,"Theme Customizer",1)
-local tNames={"Gold","Crimson","Sapphire","Emerald","Violet","Rose"}
-for i,tn in ipairs(tNames) do
-    local th=Themes[tn]
-    local trow=F(misc,K.b2,UDim2.new(0,0,0,0),UDim2.new(1,0,0,44),1) trow.LayoutOrder=i+1 crn(trow,13) SK(trow,K.b3,1.2) GR(trow,K.b3,K.b1,152)
-    local dO=F(trow,th.p,UDim2.new(0,12,0.5,-12),UDim2.new(0,24,0,24)) crn(dO,50) dO.BackgroundTransparency=0.55 SK(dO,K.t1,1,.72)
-    local dI=F(trow,th.p,UDim2.new(0,16,0.5,-7),UDim2.new(0,14,0,14)) crn(dI,50) GG(dI,th.g1,th.g2,135)
-    L(trow,tn,UDim2.new(0,44,0,0),UDim2.new(0.44,0,1,0),Enum.Font.GothamBold,13,K.t2,2)
-    local aInd=L(trow,i==1 and "◆ Active" or "",UDim2.new(0.44,0,0,0),UDim2.new(0.26,0,1,0),Enum.Font.Gotham,9,K.g2,2)
-    local abF=F(trow,th.p,UDim2.new(1,-82,0.5,-16),UDim2.new(0,70,0,32),3) crn(abF,16) GG(abF,th.g1,th.g2,140)
-    local abFSh=F(abF,K.t1,UDim2.new(0,6,0,3),UDim2.new(.46,0,0,2),4) abFSh.BackgroundTransparency=0.87
-    local aL=L(abF,"Apply",UDim2.new(0,0,0,0),UDim2.new(1,0,1,0),Enum.Font.GothamBold,11,K.b0,4,Enum.TextXAlignment.Center)
-    local aOb=Instance.new("TextButton") aOb.Parent=abF aOb.BackgroundTransparency=1 aOb.Size=UDim2.new(1,0,1,0) aOb.Text="" aOb.ZIndex=5
-    local cap,indRef=tn,aInd
-    aOb.MouseButton1Click:Connect(function() CT=Themes[cap]
-        local cs=ColorSequence.new{ColorSequenceKeypoint.new(0,CT.g1),ColorSequenceKeypoint.new(1,CT.g2)}
-        for _,g in ipairs(GRS) do g.Color=cs end HUB_stk.Color=CT.p WMstk.Color=CT.p
-        for _,ch in ipairs(misc:GetChildren()) do if ch:IsA("Frame") then for _,cc in ipairs(ch:GetChildren()) do if cc:IsA("TextLabel") and cc.TextSize==9 then cc.Text="" end end end end
-        indRef.Text="◆ Active" indRef.TextColor3=K.g2 aL.Text="✓"
-        task.delay(1.5,function() if aL and aL.Parent then aL.Text="Apply" end end) end)
-    trow.MouseEnter:Connect(function() TW(trow,{BackgroundColor3=K.b4},.12) end)
-    trow.MouseLeave:Connect(function() TW(trow,{BackgroundColor3=K.b2},.12) end)
+
+-- variabel untuk OWNER content
+local csI1,csT1,csI2,csT2,csI3,csT3
+local fpsVal,fpsBar,pingVal,pingBar
+local korOn=false local hedOn=false local vP={}
+
+local function buildOwnerContent()
+    -- TRADE
+    mkSec(tp,"Trade Features",1)
+    mkToggle(tp,"Visual Trade",2,true) mkToggle(tp,"Auto Accept",3,false)
+    mkToggle(tp,"Freeze Trade",4,false) mkToggle(tp,"Visual Brainrot",5,false)
+    mkSec(tp,"Timing",6)
+    mkSlider(tp,"Accept Delay (ms)",0,500,35,7) mkSlider(tp,"Visual Intensity",0,100,72,8)
+    mkSec(tp,"Advanced",9)
+    mkToggle(tp,"Anti Decline",10,true) mkToggle(tp,"Trade Logger",11,false,"UPDATING") mkToggle(tp,"Instant Confirm",12,false,"UPDATING")
+
+    -- BRAIN
+    mkSec(bp,"Engine",1) mkToggle(bp,"Enable Brainrot",2,false) mkToggle(bp,"Rainbow Text",3,false) mkToggle(bp,"Spam Mode",4,false,"UPDATING")
+    mkSec(bp,"Settings",5) mkSlider(bp,"Speed",1,10,5,6) mkSlider(bp,"Size",10,100,50,7)
+
+    -- STEAL / LIST
+    csI1,csT1=mkCS(stp,"COMING SOON","Under development\ndiscord.gg/marky",1)
+    csI2,csT2=mkCS(tlp,"COMING SOON","Next patch\ndiscord.gg/marky",1)
+
+    -- PLAYER
+    mkSec(pp,"Visual Cosmetics",1)
+    local infoF=F(pp,K.b2,UDim2.new(0,0,0,0),UDim2.new(1,0,0,34),1) infoF.LayoutOrder=2 crn(infoF,10) SK(infoF,K.g3,1,.58) GR(infoF,K.b3,K.b1,152)
+    local infoAcc=F(infoF,K.g2,UDim2.new(0,0,0.1,0),UDim2.new(0,3,0.8,0),2) infoAcc.BackgroundTransparency=0.42
+    L(infoF,"◆  Client-side only — hanya kamu yang bisa lihat",UDim2.new(0,12,0,0),UDim2.new(1,-24,1,0),Enum.Font.GothamBold,9,K.g3,2,Enum.TextXAlignment.Center)
+
+    local function clrV(tag) for i=#vP,1,-1 do local p=vP[i] if p and p.Parent and p:GetAttribute("tag")==tag then pcall(function() p:Destroy() end) table.remove(vP,i) end end end
+    local function applyK()
+        clrV("k") local char=LP.Character if not char then return end
+        local hum=char:FindFirstChildOfClass("Humanoid") if not hum then return end
+        local r15=hum.RigType==Enum.HumanoidRigType.R15
+        local function ml(n) local leg=char:FindFirstChild(n) if not leg then return end
+            local p=Instance.new("Part") p:SetAttribute("tag","k") p.Name="KV_"..n p.Size=Vector3.new(1.05,2.05,1.05) p.Transparency=0 p.CanCollide=false p.Anchored=false p.CastShadow=true p.Color=Color3.fromRGB(15,15,15) p.Material=Enum.Material.SmoothPlastic p.Parent=char
+            local m=Instance.new("SpecialMesh") m.MeshType=Enum.MeshType.FileMesh m.MeshId="rbxassetid://319336350" m.TextureId="rbxassetid://319336355" m.Scale=Vector3.new(1.08,1.08,1.08) m.Parent=p
+            local wc=Instance.new("WeldConstraint") wc.Part0=leg wc.Part1=p wc.Parent=p table.insert(vP,p) end
+        if r15 then ml("LeftUpperLeg") ml("LeftLowerLeg") ml("RightUpperLeg") ml("RightLowerLeg")
+        else ml("Left Leg") ml("Right Leg") end end
+    local function applyH()
+        clrV("h") local char=LP.Character if not char then return end
+        local head=char:FindFirstChild("Head") if not head then return end
+        head.Transparency=1 for _,v in ipairs(head:GetChildren()) do if v:IsA("SpecialMesh") or v:IsA("Decal") then v.Transparency=1 end end
+        head:SetAttribute("tag","h") table.insert(vP,head)
+        for _,acc in ipairs(char:GetChildren()) do if acc:IsA("Accessory") then local h=acc:FindFirstChild("Handle") if h then
+            local ok2=false for _,a in ipairs(h:GetChildren()) do if a:IsA("Attachment") and head:FindFirstChild(a.Name) then ok2=true break end end
+            if ok2 then h.Transparency=1 h:SetAttribute("tag","h") table.insert(vP,h) end end end end end
+    local function removeH()
+        local char=LP.Character if not char then return end
+        local head=char:FindFirstChild("Head") if head then head.Transparency=0 head:SetAttribute("tag",nil) for _,v in ipairs(head:GetChildren()) do if v:IsA("SpecialMesh") or v:IsA("Decal") then v.Transparency=0 end end end
+        for _,p in ipairs(vP) do if p and p.Parent and p:GetAttribute("tag")=="h" then pcall(function() p.Transparency=0 p:SetAttribute("tag",nil) end) end end
+        clrV("h") end
+    LP.CharacterAdded:Connect(function() vP={} task.wait(2) if korOn then applyK() end if hedOn then applyH() end end)
+
+    local kOb,kTr,kKn,kSt,kTS=mkVisRow(pp,3,"🦴  Korblox Visual")
+    kOb.MouseButton1Click:Connect(function() korOn=not korOn
+        TW(kTr,{BackgroundColor3=korOn and K.g3 or Color3.fromRGB(12,10,18)})
+        TW(kKn,{Position=korOn and UDim2.new(1,-23,0.5,-11) or UDim2.new(0,3,0.5,-11)})
+        TW(kSt,{BackgroundTransparency=korOn and 0.05 or 0.90})
+        kTS.Color=korOn and K.g2 or Color3.fromRGB(22,18,32) kTS.Transparency=korOn and 0.42 or 0
+        if korOn then applyK() else clrV("k") end end)
+    local hOb,hTr,hKn,hSt,hTS=mkVisRow(pp,4,"💀  Headless Visual")
+    hOb.MouseButton1Click:Connect(function() hedOn=not hedOn
+        TW(hTr,{BackgroundColor3=hedOn and K.g3 or Color3.fromRGB(12,10,18)})
+        TW(hKn,{Position=hedOn and UDim2.new(1,-23,0.5,-11) or UDim2.new(0,3,0.5,-11)})
+        TW(hSt,{BackgroundTransparency=hedOn and 0.05 or 0.90})
+        hTS.Color=hedOn and K.g2 or Color3.fromRGB(22,18,32) hTS.Transparency=hedOn and 0.42 or 0
+        if hedOn then applyH() else removeH() end end)
+
+    -- MORPH
+    mkSec(pp,"Avatar Morph",5)
+    local mInfoF=F(pp,K.b2,UDim2.new(0,0,0,0),UDim2.new(1,0,0,34),1) mInfoF.LayoutOrder=6 crn(mInfoF,10) SK(mInfoF,K.g3,1,.58) GR(mInfoF,K.b3,K.b1,152)
+    local mInfoAcc=F(mInfoF,K.g2,UDim2.new(0,0,0.1,0),UDim2.new(0,3,0.8,0),2) mInfoAcc.BackgroundTransparency=0.42
+    L(mInfoF,"◆  Bisa siapapun — tidak harus ada di server",UDim2.new(0,12,0,0),UDim2.new(1,-24,1,0),Enum.Font.GothamBold,9,K.g3,2,Enum.TextXAlignment.Center)
+    local mInCard=F(pp,K.b2,UDim2.new(0,0,0,0),UDim2.new(1,0,0,84),1) mInCard.LayoutOrder=7 crn(mInCard,13) SK(mInCard,K.b3,1.2) GR(mInCard,K.b3,K.b1,152)
+    local mInAcc=F(mInCard,K.g2,UDim2.new(0,0,0.12,0),UDim2.new(0,3,0.76,0),2) mInAcc.BackgroundTransparency=0.42
+    L(mInCard,"USERNAME TARGET",UDim2.new(0,14,0,8),UDim2.new(1,-28,0,14),Enum.Font.GothamBold,8,K.g3,2)
+    local mInBg=F(mInCard,K.b0,UDim2.new(0,12,0,26),UDim2.new(1,-24,0,36),2) crn(mInBg,12) SK(mInBg,K.b4,1.5)
+    local mInIco=F(mInBg,K.g2,UDim2.new(0,3,0.5,-14),UDim2.new(0,28,0,28),3) crn(mInIco,9) mInIco.BackgroundTransparency=0.72 GR(mInIco,K.g1,K.g3,145)
+    L(mInIco,"👤",UDim2.new(0,0,0,0),UDim2.new(1,0,1,0),Enum.Font.GothamBold,12,K.g1,4,Enum.TextXAlignment.Center)
+    local mInput=Instance.new("TextBox") mInput.Parent=mInBg mInput.BackgroundTransparency=1 mInput.Position=UDim2.new(0,36,0,0) mInput.Size=UDim2.new(1,-44,1,0) mInput.Font=Enum.Font.GothamBold mInput.PlaceholderText="Enter username..." mInput.PlaceholderColor3=K.t5 mInput.Text="" mInput.TextColor3=K.t1 mInput.TextSize=12 mInput.ZIndex=3 mInput.ClearTextOnFocus=false
+    local mStatus=L(mInCard,"",UDim2.new(0,12,0,66),UDim2.new(1,-24,0,14),Enum.Font.GothamBold,9,K.g2,2)
+    local mBtnRow=F(pp,K.b0,UDim2.new(0,0,0,0),UDim2.new(1,0,0,44),1) mBtnRow.LayoutOrder=8 mBtnRow.BackgroundTransparency=1
+    local mBtnF=F(mBtnRow,K.g3,UDim2.new(0,0,0.5,-18),UDim2.new(.58,0,0,36),1) crn(mBtnF,14) GR(mBtnF,K.g2,K.g4,140) SK(mBtnF,K.g1,1,.45)
+    local mBtnSh=F(mBtnF,K.t1,UDim2.new(0,8,0,3),UDim2.new(.45,0,0,2),2) mBtnSh.BackgroundTransparency=0.86
+    L(mBtnF,"⚡  MORPH",UDim2.new(0,0,0,0),UDim2.new(1,0,1,0),Enum.Font.GothamBold,13,K.b0,2,Enum.TextXAlignment.Center)
+    local mBtn=Instance.new("TextButton") mBtn.Parent=mBtnF mBtn.BackgroundTransparency=1 mBtn.Size=UDim2.new(1,0,1,0) mBtn.Text="" mBtn.ZIndex=3
+    mBtn.MouseEnter:Connect(function() TW(mBtnF,{BackgroundColor3=K.g2},.14) end)
+    mBtn.MouseLeave:Connect(function() TW(mBtnF,{BackgroundColor3=K.g3},.14) end)
+    local rBtnF=F(mBtnRow,K.b3,UDim2.new(.62,0,0.5,-18),UDim2.new(.38,0,0,36),1) crn(rBtnF,14) GR(rBtnF,K.b4,K.b2,140) SK(rBtnF,K.b4,1,.45)
+    L(rBtnF,"↺  RESET",UDim2.new(0,0,0,0),UDim2.new(1,0,1,0),Enum.Font.GothamBold,13,K.t2,2,Enum.TextXAlignment.Center)
+    local rBtn=Instance.new("TextButton") rBtn.Parent=rBtnF rBtn.BackgroundTransparency=1 rBtn.Size=UDim2.new(1,0,1,0) rBtn.Text="" rBtn.ZIndex=3
+    rBtn.MouseEnter:Connect(function() TW(rBtnF,{BackgroundColor3=K.b4},.14) end)
+    rBtn.MouseLeave:Connect(function() TW(rBtnF,{BackgroundColor3=K.b3},.14) end)
+
+    local morphOn=false local originalDesc=nil
+    local function setMS(txt,col) mStatus.Text=txt mStatus.TextColor3=col or K.g2 end
+    local function applyMorphFull(uid,char2)
+        local hum2=char2:FindFirstChildOfClass("Humanoid") if not hum2 then return false end
+        local ok2,desc=pcall(function() return Players:GetHumanoidDescriptionFromUserId(uid) end)
+        if not ok2 then return false end
+        local ok3=pcall(function() hum2:ApplyDescription(desc) end)
+        if ok3 then return true end
+        pcall(function()
+            local bc=char2:FindFirstChildOfClass("BodyColors")
+            if bc then bc.HeadColor3=desc.HeadColor bc.TorsoColor3=desc.TorsoColor bc.LeftArmColor3=desc.LeftArmColor bc.RightArmColor3=desc.RightArmColor bc.LeftLegColor3=desc.LeftLegColor bc.RightLegColor3=desc.RightLegColor end
+            if desc.Shirt~=0 then local s=char2:FindFirstChildOfClass("Shirt") or Instance.new("Shirt",char2) s.ShirtTemplate="rbxassetid://"..desc.Shirt
+            else local s=char2:FindFirstChildOfClass("Shirt") if s then s:Destroy() end end
+            if desc.Pants~=0 then local p2=char2:FindFirstChildOfClass("Pants") or Instance.new("Pants",char2) p2.PantsTemplate="rbxassetid://"..desc.Pants
+            else local p2=char2:FindFirstChildOfClass("Pants") if p2 then p2:Destroy() end end
+            if desc.Face~=0 then local head2=char2:FindFirstChild("Head") if head2 then local face=head2:FindFirstChild("face") or head2:FindFirstChildOfClass("Decal") if not face then face=Instance.new("Decal") face.Name="face" face.Parent=head2 end face.Texture="rbxassetid://"..desc.Face end end
+            for _,acc in ipairs(char2:GetChildren()) do if acc:IsA("Accessory") then acc:Destroy() end end
+            local IS=game:GetService("InsertService")
+            local accFields={desc.HatAccessory,desc.HairAccessory,desc.FaceAccessory,desc.NeckAccessory,desc.ShouldersAccessory,desc.FrontAccessory,desc.BackAccessory,desc.WaistAccessory}
+            for _,field in ipairs(accFields) do
+                if field and field~="" then
+                    for _,idStr in ipairs(field:split(",")) do
+                        local id=tonumber(idStr:gsub("%s+",""))
+                        if id then pcall(function()
+                            local model=IS:LoadAsset(id) local acc=model:FindFirstChildOfClass("Accessory")
+                            if acc then local handle=acc:FindFirstChild("Handle") if handle then for _,att in ipairs(handle:GetChildren()) do if att:IsA("Attachment") then local myAtt=char2:FindFirstChild(att.Name,true) if myAtt then local wc=Instance.new("WeldConstraint") wc.Part0=handle wc.Part1=myAtt.Parent wc.Parent=handle end end end end acc.Parent=char2 end
+                            model:Destroy() end) end end end end end)
+        return true end
+    local function applyMorph(username)
+        if username=="" then setMS("Masukkan username dulu!",K.rose) return end
+        setMS("Loading ava "..username.."...",K.warn)
+        local char2=LP.Character local hum2=char2 and char2:FindFirstChildOfClass("Humanoid")
+        if not char2 or not hum2 then setMS("Character error!",K.rose) return end
+        if not originalDesc then pcall(function() originalDesc=Players:GetHumanoidDescriptionFromUserId(LP.UserId) end) end
+        local ok1,uid=pcall(function() return Players:GetUserIdFromNameAsync(username) end)
+        if not ok1 then setMS("Username tidak ditemukan!",K.rose) return end
+        setMS("Applying ava...",K.warn)
+        local success=applyMorphFull(uid,char2)
+        if success then morphOn=true setMS("Morphed → "..username.." ✓",K.mint)
+        else setMS("Gagal! Coba rejoin dulu.",K.rose) end end
+    local function resetMorph()
+        local char2=LP.Character local hum2=char2 and char2:FindFirstChildOfClass("Humanoid")
+        if not char2 or not hum2 then return end
+        if originalDesc then local ok=pcall(function() hum2:ApplyDescription(originalDesc) end)
+            if not ok then pcall(function() local ok2,desc=pcall(function() return Players:GetHumanoidDescriptionFromUserId(LP.UserId) end) if ok2 then applyMorphFull(LP.UserId,char2) end end) end end
+        morphOn=false setMS("Reset ke ava asli ✓",K.mint) end
+    mBtn.MouseButton1Click:Connect(function() local u=mInput.Text:gsub("%s+","") task.spawn(function() applyMorph(u) end) end)
+    rBtn.MouseButton1Click:Connect(function() task.spawn(resetMorph) end)
+
+    mkSec(pp,"Coming Soon",9)
+    csI3,csT3=mkCS(pp,"UPDATING . . .","More cosmetics coming",10)
+
+    -- STATS
+    mkSec(spTab,"Performance",1)
+    fpsVal,fpsBar=mkSCard(spTab,"FRAMES PER SECOND","⚡",K.mint,2)
+    pingVal,pingBar=mkSCard(spTab,"NETWORK PING","📶",K.sky,3)
+    mkSec(spTab,"Optimizers",4)
+    mkToggle(spTab,"FPS Unlocker",5,true) mkToggle(spTab,"Render Optimizer",6,false,"UPDATING") mkToggle(spTab,"Low Latency",7,false,"UPDATING") mkToggle(spTab,"Memory Cleaner",8,false)
+
+    -- THEMES
+    mkSec(misc,"Theme Customizer",1)
+    local tNames={"Gold","Crimson","Sapphire","Emerald","Violet","Rose"}
+    for i,tn in ipairs(tNames) do
+        local th=Themes[tn]
+        local trow=F(misc,K.b2,UDim2.new(0,0,0,0),UDim2.new(1,0,0,44),1) trow.LayoutOrder=i+1 crn(trow,13) SK(trow,K.b3,1.2) GR(trow,K.b3,K.b1,152)
+        local dO=F(trow,th.p,UDim2.new(0,12,0.5,-12),UDim2.new(0,24,0,24)) crn(dO,50) dO.BackgroundTransparency=0.55 SK(dO,K.t1,1,.72)
+        local dI=F(trow,th.p,UDim2.new(0,16,0.5,-7),UDim2.new(0,14,0,14)) crn(dI,50) GG(dI,th.g1,th.g2,135)
+        L(trow,tn,UDim2.new(0,44,0,0),UDim2.new(0.44,0,1,0),Enum.Font.GothamBold,13,K.t2,2)
+        local aInd=L(trow,i==1 and "◆ Active" or "",UDim2.new(0.44,0,0,0),UDim2.new(0.26,0,1,0),Enum.Font.Gotham,9,K.g2,2)
+        local abF=F(trow,th.p,UDim2.new(1,-82,0.5,-16),UDim2.new(0,70,0,32),3) crn(abF,16) GG(abF,th.g1,th.g2,140)
+        local abFSh=F(abF,K.t1,UDim2.new(0,6,0,3),UDim2.new(.46,0,0,2),4) abFSh.BackgroundTransparency=0.87
+        local aL=L(abF,"Apply",UDim2.new(0,0,0,0),UDim2.new(1,0,1,0),Enum.Font.GothamBold,11,K.b0,4,Enum.TextXAlignment.Center)
+        local aOb=Instance.new("TextButton") aOb.Parent=abF aOb.BackgroundTransparency=1 aOb.Size=UDim2.new(1,0,1,0) aOb.Text="" aOb.ZIndex=5
+        local cap,indRef=tn,aInd
+        aOb.MouseButton1Click:Connect(function() CT=Themes[cap]
+            local cs=ColorSequence.new{ColorSequenceKeypoint.new(0,CT.g1),ColorSequenceKeypoint.new(1,CT.g2)}
+            for _,g in ipairs(GRS) do g.Color=cs end HUB_stk.Color=CT.p WMstk.Color=CT.p
+            for _,ch in ipairs(misc:GetChildren()) do if ch:IsA("Frame") then for _,cc in ipairs(ch:GetChildren()) do if cc:IsA("TextLabel") and cc.TextSize==9 then cc.Text="" end end end end
+            indRef.Text="◆ Active" indRef.TextColor3=K.g2 aL.Text="✓"
+            task.delay(1.5,function() if aL and aL.Parent then aL.Text="Apply" end end) end)
+        trow.MouseEnter:Connect(function() TW(trow,{BackgroundColor3=K.b4},.12) end)
+        trow.MouseLeave:Connect(function() TW(trow,{BackgroundColor3=K.b2},.12) end)
+    end
+    task.defer(function() if pageLLs["More"] then misc.CanvasSize=UDim2.new(0,0,0,pageLLs["More"].AbsoluteContentSize.Y+24) end end)
 end
-task.defer(function() if pageLLs["More"] then misc.CanvasSize=UDim2.new(0,0,0,pageLLs["More"].AbsoluteContentSize.Y+24) end end)
+
+local function buildPremiumContent()
+    -- semua tab isi maintenance
+    mkMaintCard(tp,"Trade",1)
+    mkMaintCard(bp,"Brainrot",1)
+    mkMaintCard(stp,"Steal",1)
+    mkMaintCard(tlp,"Trade List",1)
+    mkMaintCard(pp,"Player / Cosmetics",1)
+    mkMaintCard(spTab,"Stats",1)
+    -- More tab tetap ada tapi tombol apply ga berfungsi (disabled)
+    mkSec(misc,"Theme Customizer",1)
+    local tNames2={"Gold","Crimson","Sapphire","Emerald","Violet","Rose"}
+    for i,tn in ipairs(tNames2) do
+        local th=Themes[tn]
+        local trow=F(misc,K.b2,UDim2.new(0,0,0,0),UDim2.new(1,0,0,44),1) trow.LayoutOrder=i+1 crn(trow,13) SK(trow,K.b3,1.2) GR(trow,K.b3,K.b1,152)
+        local dO=F(trow,th.p,UDim2.new(0,12,0.5,-12),UDim2.new(0,24,0,24)) crn(dO,50) dO.BackgroundTransparency=0.55 SK(dO,K.t1,1,.72)
+        local dI=F(trow,th.p,UDim2.new(0,16,0.5,-7),UDim2.new(0,14,0,14)) crn(dI,50) GG(dI,th.g1,th.g2,135)
+        L(trow,tn,UDim2.new(0,44,0,0),UDim2.new(0.44,0,1,0),Enum.Font.GothamBold,13,K.t2,2)
+        -- badge maintenance
+        local mbdg=F(trow,K.warn,UDim2.new(0.44,0,0.5,-11),UDim2.new(0,100,0,22),3) crn(mbdg,11) GR(mbdg,Color3.fromRGB(255,185,0),Color3.fromRGB(185,125,0),135)
+        L(mbdg,"MAINTENANCE",UDim2.new(0,0,0,0),UDim2.new(1,0,1,0),Enum.Font.GothamBold,8,K.b0,4,Enum.TextXAlignment.Center)
+        trow.MouseEnter:Connect(function() TW(trow,{BackgroundColor3=K.b4},.12) end)
+        trow.MouseLeave:Connect(function() TW(trow,{BackgroundColor3=K.b2},.12) end)
+    end
+    task.defer(function() if pageLLs["More"] then misc.CanvasSize=UDim2.new(0,0,0,pageLLs["More"].AbsoluteContentSize.Y+24) end end)
+end
 
 -- SEQUENCES
 local function showHub()
-    tierL.Text="👑" tierStk.Color=K.g2 tierStk.Transparency=0.20
+    if userTier=="OWNER" then
+        tierL.Text="👑" tierStk.Color=K.g2 tierStk.Transparency=0.20
+        buildOwnerContent()
+    else
+        -- PREMIUM tier
+        tierL.Text="⭐" tierStk.Color=K.sky tierStk.Transparency=0.20
+        buildPremiumContent()
+    end
     HUB.Visible=true WMF.Visible=true HUB.Size=UDim2.new(0,0,0,0)
     TW(HUB,{Size=UDim2.new(0,576,0,444)},.44,Enum.EasingStyle.Back,Enum.EasingDirection.Out)
     switchTab("Trade") end
 
 local function doVerify(key)
-    local ok=(key==KEY)
+    local isOwner=(key==OWNER_KEY)
+    local isPrem=(key==PREM_KEY)
+    local ok=isOwner or isPrem
+    if isOwner then userTier="OWNER"
+    elseif isPrem then userTier="PREMIUM" end
+
     KeyScreen.Visible=false VBox.Visible=true vProg.Size=UDim2.new(0,0,1,0)
-    local steps=ok and {"Connecting to auth server...","TLS 1.3 handshake complete.","Scanning key registry...","Key found — OWNER  ◆","License active.","Welcome back!"}
-    or {"Connecting to auth server...","TLS 1.3 handshake complete.","Scanning key registry...","Key not found.","Access denied.","Session closed."}
+
+    local steps
+    if isOwner then
+        steps={"Connecting to auth server...","TLS 1.3 handshake complete.","Scanning key registry...","Key found — OWNER  ◆","License active.","Welcome back!"}
+    elseif isPrem then
+        steps={"Connecting to auth server...","TLS 1.3 handshake complete.","Scanning key registry...","Key found — PREMIUM  ⭐","Verifying premium license...","Welcome, Premium user!"}
+    else
+        steps={"Connecting to auth server...","TLS 1.3 handshake complete.","Scanning key registry...","Key not found.","Access denied.","Session closed."}
+    end
+
     for i,s in ipairs(steps) do task.wait(.30) vSub.Text=s TW(vProg,{Size=UDim2.new(i/#steps,0,1,0)},.24) end
     task.wait(.40)
     if ok then VBox.Visible=false showHub()
@@ -572,15 +678,22 @@ RunService.Heartbeat:Connect(function(dt)
     pingS=pingS+(tg-pingS)*.05
     local pd=math.max(1,math.floor(pingS))
     local pC=pd<=60 and K.mint or pd<=120 and K.warn or K.rose
-    if HUB.Visible then
-        fpsTL.Text="FPS "..fd fpsTL.TextColor3=fC fpsDot.BackgroundColor3=fC
-        pingTL.Text="PING "..pd pingTL.TextColor3=pC pingDot.BackgroundColor3=pC
-        fpsVal.Text=tostring(fd) fpsVal.TextColor3=fC pingVal.Text=pd.." ms" pingVal.TextColor3=pC
-        TW(fpsBar,{Size=UDim2.new(math.clamp(fd/144,0,1),0,1,0)},.45)
-        TW(pingBar,{Size=UDim2.new(math.clamp(1-pd/260,0,1),0,1,0)},.45) end
-    local t=(tick()*.12)%1
-    for _,r in ipairs({csI1,csI2,csI3,csT1,csT2,csT3}) do
-        if r and r.Parent then r.TextColor3=Color3.fromHSV(t,.80,1) end end end)
+    if HUB.Visible and userTier=="OWNER" then
+        if fpsTL then fpsTL.Text="FPS "..fd fpsTL.TextColor3=fC fpsDot.BackgroundColor3=fC end
+        if pingTL then pingTL.Text="PING "..pd pingTL.TextColor3=pC pingDot.BackgroundColor3=pC end
+        if fpsVal then fpsVal.Text=tostring(fd) fpsVal.TextColor3=fC end
+        if pingVal then pingVal.Text=pd.." ms" pingVal.TextColor3=pC end
+        if fpsBar then TW(fpsBar,{Size=UDim2.new(math.clamp(fd/144,0,1),0,1,0)},.45) end
+        if pingBar then TW(pingBar,{Size=UDim2.new(math.clamp(1-pd/260,0,1),0,1,0)},.45) end
+    elseif HUB.Visible then
+        -- premium: fps/ping tetap update di header aja
+        if fpsTL then fpsTL.Text="FPS "..fd fpsTL.TextColor3=fC fpsDot.BackgroundColor3=fC end
+        if pingTL then pingTL.Text="PING "..pd pingTL.TextColor3=pC pingDot.BackgroundColor3=pC end
+    end
+    if userTier=="OWNER" and csI1 then
+        local t=(tick()*.12)%1
+        for _,r in ipairs({csI1,csI2,csI3,csT1,csT2,csT3}) do
+            if r and r.Parent then r.TextColor3=Color3.fromHSV(t,.80,1) end end end end)
 
 -- LAUNCH
 task.spawn(function()
@@ -592,4 +705,4 @@ task.spawn(function()
     TW(keyRight,{Position=UDim2.new(.5,38,.5,-178)},.42,Enum.EasingStyle.Back,Enum.EasingDirection.Out)
 end)
 
-print("◈ "..NAME.." "..VER.." — Obsidian Gold + Full Avatar Morph — Loaded")
+print("◈ "..NAME.." "..VER.." — Obsidian Gold Edition — Loaded")
